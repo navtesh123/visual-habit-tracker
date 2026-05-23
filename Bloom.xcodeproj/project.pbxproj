@@ -138,7 +138,7 @@
 		8A26AED9B71D3E4464CA76D6 /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		8ACD398B52BFC76963741006 /* BloomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloomTests.swift; sourceTree = "<group>"; };
 		8EB21E33F4C4712C107215A4 /* CompareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompareView.swift; sourceTree = "<group>"; };
-		8F3F5BC60AA3D9FB5C953313 /* BloomWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = BloomWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F3F5BC60AA3D9FB5C953313 /* BloomWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BloomWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		90DC9DDDB10BF4C84189CD71 /* HapticEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticEngine.swift; sourceTree = "<group>"; };
 		9419E09A926D0A43AFAEA70B /* BloomApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloomApp.swift; sourceTree = "<group>"; };
 		98E8505DE57EAE80ADF460FE /* Bloom.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Bloom.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -692,6 +692,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = BloomWidget/BloomWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = N5PS6LW9NY;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = BloomWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
@@ -730,6 +731,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = BloomWidget/BloomWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = N5PS6LW9NY;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = BloomWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
