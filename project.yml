@@ -1,0 +1,121 @@
+name: Progress
+options:
+  bundleIdPrefix: app.progress
+  deploymentTarget:
+    iOS: "26.0"
+  developmentLanguage: en
+  createIntermediateGroups: true
+  groupSortPosition: top
+  generateEmptyDirectories: true
+  xcodeVersion: "26.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.10"
+    IPHONEOS_DEPLOYMENT_TARGET: "26.0"
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    SWIFT_STRICT_CONCURRENCY: minimal
+targets:
+  Progress:
+    type: application
+    platform: iOS
+    deploymentTarget: "26.0"
+    sources:
+      - path: Progress
+        excludes:
+          - "**/.DS_Store"
+    resources:
+      - path: Progress/Resources/Assets.xcassets
+      - path: Progress/Resources/Fonts
+        optional: true
+    entitlements:
+      path: Progress/Resources/Progress.entitlements
+    info:
+      path: Progress/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: Progress
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"
+        LSRequiresIPhoneOS: true
+        UILaunchScreen:
+          UIColorName: MidnightAbyss
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UIRequiredDeviceCapabilities:
+          - armv7
+          - still-camera
+        NSCameraUsageDescription: "Progress uses the camera to take your progress photos. They stay on this device."
+        NSPhotoLibraryAddUsageDescription: "Progress can save exported timelapses and comparisons to your Photos library. Your tracked photos themselves stay on this device."
+        NSFaceIDUsageDescription: "Progress uses Face ID so only you can see your tracked photos."
+        NSUserTrackingUsageDescription: "Progress never tracks you. This permission is declined by default."
+        ITSAppUsesNonExemptEncryption: false
+        UIAppFonts:
+          - BebasNeue-Regular.ttf
+          - Inter-Regular.ttf
+          - Inter-Medium.ttf
+          - Inter-SemiBold.ttf
+        # M9 — deep-link URL the widget puts behind its capture tile.
+        CFBundleURLTypes:
+          - CFBundleURLSchemes:
+              - progress
+            CFBundleURLName: app.progress.Progress.capture
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.progress.Progress
+        TARGETED_DEVICE_FAMILY: "1"
+        GENERATE_INFOPLIST_FILE: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        DEVELOPMENT_TEAM: ""
+        CODE_SIGN_STYLE: Automatic
+        SUPPORTS_MACCATALYST: NO
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
+        CODE_SIGN_ENTITLEMENTS: Progress/Resources/Progress.entitlements
+    dependencies:
+      - target: ProgressWidget
+        embed: true
+
+  # PRD §3.7 / M9 — Home-screen widget extension. Shares the App Group with
+  # the main app so it can read the widget snapshot + latest photo JPEG.
+  ProgressWidget:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "26.0"
+    sources:
+      - path: ProgressWidget
+        excludes:
+          - "**/.DS_Store"
+          - "Info.plist"
+          - "ProgressWidget.entitlements"
+      # Shared types used by both targets. Keep this list short on purpose —
+      # the widget binary must stay lean.
+      - path: Progress/Features/Widget/WidgetShared.swift
+    resources:
+      - path: Progress/Resources/Assets.xcassets
+    entitlements:
+      path: ProgressWidget/ProgressWidget.entitlements
+    info:
+      path: ProgressWidget/Info.plist
+      properties:
+        CFBundleDisplayName: Progress
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.progress.Progress.ProgressWidget
+        TARGETED_DEVICE_FAMILY: "1"
+        GENERATE_INFOPLIST_FILE: NO
+        SKIP_INSTALL: YES
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_ENTITLEMENTS: ProgressWidget/ProgressWidget.entitlements
+
+  ProgressTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "26.0"
+    sources:
+      - path: ProgressTests
+    dependencies:
+      - target: Progress
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.progress.ProgressTests
+        GENERATE_INFOPLIST_FILE: YES

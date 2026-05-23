@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Progress</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>app.progress.Progress.capture</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>progress</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Progress uses the camera to take your progress photos. They stay on this device.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Progress uses Face ID so only you can see your tracked photos.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Progress can save exported timelapses and comparisons to your Photos library. Your tracked photos themselves stay on this device.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Progress never tracks you. This permission is declined by default.</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>BebasNeue-Regular.ttf</string>
+		<string>Inter-Regular.ttf</string>
+		<string>Inter-Medium.ttf</string>
+		<string>Inter-SemiBold.ttf</string>
+	</array>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>MidnightAbyss</string>
+	</dict>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+		<string>still-camera</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+</dict>
+</plist>
