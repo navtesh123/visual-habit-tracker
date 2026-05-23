@@ -17,7 +17,7 @@ import SwiftData
 import CloudKit
 import Combine
 
-private let cloudContainerID = "iCloud.app.bloomtracker.BloomTracker"
+private let cloudContainerID = "iCloud.app.bloomtracker.Bloom"
 
 @MainActor
 @Observable

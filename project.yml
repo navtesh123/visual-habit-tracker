@@ -57,10 +57,10 @@ targets:
         CFBundleURLTypes:
           - CFBundleURLSchemes:
               - progress
-            CFBundleURLName: app.bloomtracker.BloomTracker.capture
+            CFBundleURLName: app.bloomtracker.Bloom.capture
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: app.bloomtracker.BloomTracker
+        PRODUCT_BUNDLE_IDENTIFIER: app.bloomtracker.Bloom
         TARGETED_DEVICE_FAMILY: "1"
         GENERATE_INFOPLIST_FILE: NO
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
@@ -100,7 +100,7 @@ targets:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: app.bloomtracker.BloomTracker.ProgressWidget
+        PRODUCT_BUNDLE_IDENTIFIER: app.bloomtracker.Bloom.ProgressWidget
         TARGETED_DEVICE_FAMILY: "1"
         GENERATE_INFOPLIST_FILE: NO
         SKIP_INSTALL: YES
@@ -117,5 +117,5 @@ targets:
       - target: Progress
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: app.bloomtracker.ProgressTests
+        PRODUCT_BUNDLE_IDENTIFIER: app.bloomtracker.BloomTests
         GENERATE_INFOPLIST_FILE: YES
