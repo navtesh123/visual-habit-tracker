@@ -43,14 +43,12 @@
 		906A65860C2D9400BFCCAD0B /* SubjectType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CF8E0260BF2F58DB45CC1B /* SubjectType.swift */; };
 		92525ABA9A1E9D6182C7DC1D /* Inter-VariableFont_opsz,wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9422F8C7734177AC08A660E /* Inter-VariableFont_opsz,wght.ttf */; };
 		936789DF2E0A6FA84A55E81D /* BloomWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30F207F71543F479E184997D /* BloomWidgetBundle.swift */; };
-		9774D54569F98B0ADC1E6A6A /* LockScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A57A7BAFA7FEC66C4F95E2 /* LockScreenView.swift */; };
 		9820439525B2F386EF04BFC3 /* ProjectExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13418BAC85BBAB6C6BE552B8 /* ProjectExporter.swift */; };
 		9AB3494C9905375D92B73170 /* BackupStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6935DF6692B665EA5C6655D /* BackupStatus.swift */; };
 		9C448E65A2E8E330CFE06D6A /* DateFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 101E6054619F054D7D19A68B /* DateFormatting.swift */; };
 		9CD00EF21CED0F1056C92D72 /* AutoAlignProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58A7E350A55D76E31B93A47C /* AutoAlignProcessor.swift */; };
 		9DFE1D31B3B24793005E4FBC /* Shapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = A016C0D6FB6BB37F31B106CB /* Shapes.swift */; };
 		9EA0B650D9CC7EFC7AF6D117 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790DD3A2EBE33AA73758C0FF /* AppSettings.swift */; };
-		A103194E52C0C6D839ED18B6 /* AppLockController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EA67D5E7DC47C2F323A2060 /* AppLockController.swift */; };
 		A53B0A362CEB3C539E13A1C8 /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E88E08D290202D69ADCF0E3 /* CameraViewModel.swift */; };
 		A5A5864C7712A2F4D0C9F1A9 /* ProjectEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A1A3E56349156AC674F7D4 /* ProjectEditorView.swift */; };
 		A6C4AAD7E181E65616046D99 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12443824F9A7BB64265B29B8 /* HomeView.swift */; };
@@ -104,14 +102,12 @@
 
 /* Begin PBXFileReference section */
 		0E3E617BA1B5D4180B638467 /* MotionTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionTracker.swift; sourceTree = "<group>"; };
-		0EA67D5E7DC47C2F323A2060 /* AppLockController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockController.swift; sourceTree = "<group>"; };
 		100207C8973F9CAF7997B793 /* BloomWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloomWidget.swift; sourceTree = "<group>"; };
 		101E6054619F054D7D19A68B /* DateFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatting.swift; sourceTree = "<group>"; };
 		12443824F9A7BB64265B29B8 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		13418BAC85BBAB6C6BE552B8 /* ProjectExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectExporter.swift; sourceTree = "<group>"; };
 		197ECEB0C5153EB43B22B014 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		1D2AFB0D3EDABDF5D77C369D /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
-		20A57A7BAFA7FEC66C4F95E2 /* LockScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenView.swift; sourceTree = "<group>"; };
 		232F1BD7FF6BBD882FD737C6 /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
 		27C62BF8A0E20BEA6607BDBD /* LevelIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelIndicator.swift; sourceTree = "<group>"; };
 		2AF621CF6C9DFF7B5D0DE438 /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
@@ -294,8 +290,6 @@
 		77C4D43D021512B4288B294A /* Lock */ = {
 			isa = PBXGroup;
 			children = (
-				0EA67D5E7DC47C2F323A2060 /* AppLockController.swift */,
-				20A57A7BAFA7FEC66C4F95E2 /* LockScreenView.swift */,
 			);
 			path = Lock;
 			sourceTree = "<group>";
@@ -593,7 +587,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A103194E52C0C6D839ED18B6 /* AppLockController.swift in Sources */,
 				9EA0B650D9CC7EFC7AF6D117 /* AppSettings.swift in Sources */,
 				9CD00EF21CED0F1056C92D72 /* AutoAlignProcessor.swift in Sources */,
 				9AB3494C9905375D92B73170 /* BackupStatus.swift in Sources */,
@@ -615,7 +608,6 @@
 				A6C4AAD7E181E65616046D99 /* HomeView.swift in Sources */,
 				D48DAAC3F308B09F8813D1E2 /* ImageProcessing.swift in Sources */,
 				58BE35DD2D49C6DE8E91C773 /* LevelIndicator.swift in Sources */,
-				9774D54569F98B0ADC1E6A6A /* LockScreenView.swift in Sources */,
 				00BD0B60363FECC8B2A80AD3 /* MotionTracker.swift in Sources */,
 				55FBB4D77B9D44DCAF4E6200 /* NeonPlayroom.swift in Sources */,
 				F78F99EE01991661517FC4B8 /* OnboardingView.swift in Sources */,
