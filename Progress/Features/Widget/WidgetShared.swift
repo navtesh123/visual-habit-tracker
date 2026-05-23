@@ -22,7 +22,7 @@ struct WidgetSnapshot: Codable, Equatable {
 }
 
 enum WidgetSharedConstants {
-    static let appGroupIdentifier = "group.app.progress.Progress"
+    static let appGroupIdentifier = "group.app.bloomtracker.BloomTracker"
     static let snapshotFilename = "widget-snapshot.json"
     static let latestPhotoFilename = "widget-latest.jpg"
     static let widgetKind = "ProgressWidget"

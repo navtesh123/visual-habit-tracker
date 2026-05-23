@@ -74,5 +74,5 @@ enum AppSettings {
 /// App Group container ID shared between the main app and `ProgressWidget`.
 /// Declared in both targets' `.entitlements` files.
 enum AppGroup {
-    static let identifier = "group.app.progress.Progress"
+    static let identifier = "group.app.bloomtracker.BloomTracker"
 }

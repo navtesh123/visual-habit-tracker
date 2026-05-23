@@ -22,7 +22,7 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>app.progress.Progress.capture</string>
+			<string>app.bloomtracker.BloomTracker.capture</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>progress</string>
