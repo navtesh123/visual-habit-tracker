@@ -9,7 +9,6 @@ enum AppSettings {
     enum Key {
         static let hasCompletedOnboarding   = "progress.hasCompletedOnboarding"
         static let cloudKitBackupEnabled    = "progress.cloudKitBackupEnabled"
-        static let faceIDLockEnabled        = "progress.faceIDLockEnabled"
         static let globalReminderHour       = "progress.globalReminderHour"
         static let globalReminderMinute     = "progress.globalReminderMinute"
         static let notificationsAuthorized  = "progress.notificationsAuthorized"
@@ -26,11 +25,6 @@ enum AppSettings {
     static var cloudKitBackupEnabled: Bool {
         get { UserDefaults.standard.bool(forKey: Key.cloudKitBackupEnabled) }
         set { UserDefaults.standard.set(newValue, forKey: Key.cloudKitBackupEnabled) }
-    }
-
-    static var faceIDLockEnabled: Bool {
-        get { UserDefaults.standard.bool(forKey: Key.faceIDLockEnabled) }
-        set { UserDefaults.standard.set(newValue, forKey: Key.faceIDLockEnabled) }
     }
 
     static var notificationsAuthorized: Bool {

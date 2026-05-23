@@ -15,21 +15,17 @@ struct SettingsView: View {
     @Query(sort: \Project.createdAt, order: .reverse) private var projects: [Project]
 
     @Bindable private var backup = CloudKitBackupController.shared
-    @Bindable private var lock = AppLockController.shared
     @Bindable private var reminders = ReminderScheduler.shared
     @State private var exportCoordinator = ExportCoordinator()
 
     @State private var backupEnabled: Bool = AppSettings.cloudKitBackupEnabled
-    @State private var lockEnabled: Bool = AppSettings.faceIDLockEnabled
     @State private var globalReminderTime: Date = SettingsView.componentsToDate(AppSettings.globalReminderTime)
     @State private var pinnedWidgetID: UUID? = AppSettings.pinnedWidgetProjectID
-    @State private var lockAlert: String?
 
     var body: some View {
         NavigationStack {
             Form {
                 backupSection
-                privacySection
                 remindersSection
                 exportSection
                 aboutSection
@@ -47,14 +43,6 @@ struct SettingsView: View {
             .sheet(item: $exportCoordinator.pendingShare) { artifact in
                 ExportShareSheet(url: artifact.url)
                     .presentationDetents([.medium, .large])
-            }
-            .alert("Couldn't enable lock", isPresented: Binding(
-                get: { lockAlert != nil },
-                set: { if !$0 { lockAlert = nil } }
-            )) {
-                Button("OK") { lockAlert = nil }
-            } message: {
-                Text(lockAlert ?? "")
             }
             .task {
                 await reminders.refreshAuthorizationState()
@@ -109,44 +97,6 @@ struct SettingsView: View {
         }
     }
 
-    // MARK: - Privacy
-
-    private var privacySection: some View {
-        Section {
-            Toggle(isOn: $lockEnabled) {
-                Label(
-                    "\(lock.biometryDisplayName) app lock",
-                    systemImage: "lock.shield"
-                )
-            }
-            .disabled(!lock.biometricsAvailable)
-            .onChange(of: lockEnabled) { _, isOn in
-                Task {
-                    if isOn {
-                        let ok = await lock.enableFromSettings()
-                        if !ok {
-                            lockEnabled = false
-                            lockAlert = "We couldn't verify \(lock.biometryDisplayName). Try again from Settings."
-                        }
-                    } else {
-                        lock.disable()
-                    }
-                }
-            }
-
-            if !lock.biometricsAvailable {
-                Text("Set up \(lock.biometryDisplayName) on this device to enable the app lock.")
-                    .bodyStyle(12)
-                    .foregroundStyle(NeonPlayroom.ghostWhite.opacity(0.65))
-            }
-        } header: {
-            Text("Privacy")
-        } footer: {
-            Text("Photos stay in this app — they're never added to your camera roll. Locations are stripped from every photo before it's saved.")
-                .bodyStyle(12)
-        }
-    }
-
     // MARK: - Reminders
 
     private var remindersSection: some View {
@@ -197,40 +147,6 @@ struct SettingsView: View {
 
     private var exportSection: some View {
         Section {
-            ForEach(projects) { project in
-                Menu {
-                    Button {
-                        Task { await exportCoordinator.run(.timelapse, project: project) }
-                    } label: {
-                        Label("Timelapse (.mp4)", systemImage: "play.rectangle")
-                    }
-                    .disabled(project.photos.count < 2)
-                    Button {
-                        Task { await exportCoordinator.run(.contactSheet, project: project) }
-                    } label: {
-                        Label("Contact sheet (.png)", systemImage: "square.grid.3x3")
-                    }
-                    .disabled(project.photos.isEmpty)
-                    Button {
-                        Task { await exportCoordinator.run(.originalsZIP, project: project) }
-                    } label: {
-                        Label("Originals (.zip)", systemImage: "doc.zipper")
-                    }
-                    .disabled(project.photos.isEmpty)
-                } label: {
-                    HStack {
-                        Circle()
-                            .fill(project.accentColor.color)
-                            .frame(width: 12, height: 12)
-                        Text(project.name)
-                            .bodyStyle(15, weight: .medium)
-                        Spacer()
-                        Image(systemName: "square.and.arrow.up")
-                            .foregroundStyle(NeonPlayroom.limeSqueeze)
-                    }
-                }
-            }
-
             Button {
                 Task { await exportCoordinator.runAllProjects(projects) }
             } label: {
@@ -257,7 +173,7 @@ struct SettingsView: View {
         } header: {
             Text("Export")
         } footer: {
-            Text("Manual exports work whether iCloud backup is on or off. This is your safety net.")
+            Text("Export a zip of all your projects any time, whether or not iCloud backup is on.")
                 .bodyStyle(12)
         }
     }

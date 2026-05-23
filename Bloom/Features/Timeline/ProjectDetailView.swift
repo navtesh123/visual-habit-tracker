@@ -12,7 +12,6 @@ struct ProjectDetailView: View {
     @State private var showTimelapse: Bool = false
     @State private var showProgressToast: Bool = false
     @State private var lastSeenPhotoCount: Int = 0
-    @State private var exportCoordinator = ExportCoordinator()
 
     private let backup = CloudKitBackupController.shared
 
@@ -48,33 +47,6 @@ struct ProjectDetailView: View {
                     .displayStyle(22)
                     .foregroundStyle(NeonPlayroom.ghostWhite)
             }
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    Button {
-                        Task { await exportCoordinator.run(.timelapse, project: project) }
-                    } label: {
-                        Label("Export timelapse (.mp4)", systemImage: "play.rectangle")
-                    }
-                    .disabled(project.photos.count < 2)
-                    Button {
-                        Task { await exportCoordinator.run(.contactSheet, project: project) }
-                    } label: {
-                        Label("Export contact sheet (.png)", systemImage: "square.grid.3x3")
-                    }
-                    .disabled(project.photos.isEmpty)
-                    Button {
-                        Task { await exportCoordinator.run(.originalsZIP, project: project) }
-                    } label: {
-                        Label("Export originals (.zip)", systemImage: "doc.zipper")
-                    }
-                    .disabled(project.photos.isEmpty)
-                } label: {
-                    Image(systemName: "ellipsis.circle")
-                        .font(.headline)
-                        .frame(width: 36, height: 36)
-                }
-                .accessibilityLabel("Project actions")
-            }
         }
         .navigationDestination(isPresented: $showCamera) {
             CameraView(project: project)
@@ -84,10 +56,6 @@ struct ProjectDetailView: View {
         }
         .navigationDestination(isPresented: $showTimelapse) {
             TimelapsePlayerView(project: project)
-        }
-        .sheet(item: $exportCoordinator.pendingShare) { artifact in
-            ExportShareSheet(url: artifact.url)
-                .presentationDetents([.medium, .large])
         }
         .fullScreenCover(item: $viewerPhoto) { photo in
             PhotoViewerView(

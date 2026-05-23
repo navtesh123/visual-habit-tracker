@@ -4,10 +4,9 @@ import SwiftData
 /// Root navigation surface. Single-stack for v1 — Home is the only
 /// top-level destination; everything else is pushed or sheet-presented.
 ///
-/// PRD §3.1 / §3.8 / §5.3 — this layer also hosts the Onboarding gate
-/// (`hasCompletedOnboarding`), the Face ID lock (`AppLockController`), and
-/// the deep-link router for `progress://capture/<projectID>` from the
-/// home-screen widget.
+/// PRD §3.1 / §3.8 — this layer also hosts the Onboarding gate
+/// (`hasCompletedOnboarding`) and the deep-link router for
+/// `bloom://capture/<projectID>` from the home-screen widget.
 struct RootView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.scenePhase) private var scenePhase
@@ -17,11 +16,9 @@ struct RootView: View {
     @State private var hasCompletedOnboarding: Bool = AppSettings.hasCompletedOnboarding
     @State private var creatingFirstProject: Bool = false
 
-    /// Project the deep-link router resolved from `progress://capture/<UUID>`.
+    /// Project the deep-link router resolved from `bloom://capture/<UUID>`.
     /// Set on `onOpenURL`, consumed by the navigation destination.
     @State private var deepLinkCaptureProject: Project?
-
-    @Bindable private var lockController = AppLockController.shared
 
     var body: some View {
         ZStack {
@@ -37,17 +34,10 @@ struct RootView: View {
                 .transition(.opacity)
                 .zIndex(2)
             }
-
-            if shouldShowLock {
-                LockScreenView(controller: lockController)
-                    .transition(.opacity)
-                    .zIndex(3)
-            }
         }
         .environment(\.reduceTransparencyEnabled, reduceTransparency)
         .environment(\.reduceMotionEnabled, reduceMotion)
         .animation(.easeInOut(duration: 0.2), value: hasCompletedOnboarding)
-        .animation(.easeInOut(duration: 0.2), value: lockController.state)
         .sheet(isPresented: $creatingFirstProject) {
             ProjectEditorView(mode: .create) { _ in
                 creatingFirstProject = false
@@ -65,14 +55,8 @@ struct RootView: View {
             reduceMotion = UIAccessibility.isReduceMotionEnabled
         }
         .onChange(of: scenePhase) { _, phase in
-            switch phase {
-            case .background, .inactive:
-                lockController.handleEnteredBackground()
-            case .active:
-                lockController.handleEnteredForeground()
+            if phase == .active {
                 CloudKitBackupController.shared.refresh()
-            @unknown default:
-                break
             }
         }
         .task {
@@ -81,14 +65,6 @@ struct RootView: View {
             let projects = (try? context.fetch(FetchDescriptor<Project>())) ?? []
             await ReminderScheduler.shared.resync(allProjects: projects)
             WidgetSnapshotPublisher.publish(from: projects)
-        }
-    }
-
-    private var shouldShowLock: Bool {
-        guard hasCompletedOnboarding else { return false }
-        switch lockController.state {
-        case .locked, .failed: return true
-        case .authenticated, .unlocked: return false
         }
     }
 
