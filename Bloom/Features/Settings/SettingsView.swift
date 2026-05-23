@@ -20,7 +20,6 @@ struct SettingsView: View {
 
     @State private var backupEnabled: Bool = AppSettings.cloudKitBackupEnabled
     @State private var globalReminderTime: Date = SettingsView.componentsToDate(AppSettings.globalReminderTime)
-    @State private var pinnedWidgetID: UUID? = AppSettings.pinnedWidgetProjectID
 
     var body: some View {
         NavigationStack {
@@ -153,23 +152,6 @@ struct SettingsView: View {
                 Label("Export all projects (.zip)", systemImage: "archivebox")
             }
             .disabled(projects.isEmpty)
-
-            Picker("Pin to widget", selection: Binding(
-                get: { pinnedWidgetID ?? UUID(uuidString: "00000000-0000-0000-0000-000000000000")! },
-                set: { newValue in
-                    let nilSentinel = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
-                    let resolved: UUID? = (newValue == nilSentinel) ? nil : newValue
-                    pinnedWidgetID = resolved
-                    AppSettings.pinnedWidgetProjectID = resolved
-                    WidgetSnapshotPublisher.publish(from: projects)
-                }
-            )) {
-                Text("Most recently captured")
-                    .tag(UUID(uuidString: "00000000-0000-0000-0000-000000000000")!)
-                ForEach(projects) { project in
-                    Text(project.name).tag(project.id)
-                }
-            }
         } header: {
             Text("Export")
         } footer: {

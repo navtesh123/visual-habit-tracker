@@ -248,10 +248,6 @@ struct ReviewSaveView: View {
         do {
             _ = try PhotoStore.shared.save(displayedImage, for: project, meta: resolvedMeta, in: context)
             Haptics.success()
-            // Republish widget snapshot so the home-screen tile reflects
-            // the brand-new photo without waiting for the next timeline tick.
-            let allProjects = (try? context.fetch(FetchDescriptor<Project>())) ?? []
-            WidgetSnapshotPublisher.publish(from: allProjects)
             onCompletion(true)
             dismiss()
         } catch {

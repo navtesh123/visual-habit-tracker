@@ -166,10 +166,6 @@ struct ProjectEditorView: View {
                     await ReminderScheduler.shared.removeReminders(for: project)
                 }
             }
-            // M9 — keep the widget snapshot fresh with the latest pinned /
-            // most-recent project.
-            let all = (try? context.fetch(FetchDescriptor<Project>())) ?? []
-            WidgetSnapshotPublisher.publish(from: all)
             onSave(project)
             dismiss()
         } catch {

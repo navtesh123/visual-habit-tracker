@@ -10,23 +10,13 @@ struct HomeView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Project.createdAt, order: .reverse) private var projects: [Project]
 
-    /// Set by `RootView.handleDeepLink` when the home-screen widget opens
-    /// `progress://capture/<projectID>`. Bound here so we can route to the
-    /// camera without a transient sheet flash.
-    @Binding var deepLinkCaptureProject: Project?
-
     @State private var editingProject: Project?
     @State private var creatingNew: Bool = false
     @State private var pickerPresented: Bool = false
     @State private var pendingCaptureProject: Project?
-    @State private var pendingCameraPath: [CameraRoute] = []
     @State private var showSettings: Bool = false
 
     @Bindable private var backup = CloudKitBackupController.shared
-
-    init(deepLinkCaptureProject: Binding<Project?> = .constant(nil)) {
-        self._deepLinkCaptureProject = deepLinkCaptureProject
-    }
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
@@ -71,14 +61,6 @@ struct HomeView: View {
         }
         .navigationDestination(item: $pendingCaptureProject) { project in
             CameraView(project: project)
-        }
-        .onChange(of: deepLinkCaptureProject) { _, newValue in
-            // Route widget deep-link → camera. Clear the source binding so
-            // subsequent toggles re-trigger the navigation.
-            if let project = newValue {
-                pendingCaptureProject = project
-                deepLinkCaptureProject = nil
-            }
         }
         .task {
             backup.refresh()
@@ -274,8 +256,3 @@ private struct ProjectPickerSheet: View {
     }
 }
 
-/// Sentinel for `navigationDestination(item:)` chains from Home.
-/// (Currently a single-case enum; expands when we add post-save routing.)
-enum CameraRoute: Hashable {
-    case capture(UUID)
-}

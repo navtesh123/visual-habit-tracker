@@ -12,12 +12,8 @@
 		076C1C0898C9BB4D5AFAB525 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C7781015D398838206355241 /* README.md */; };
 		0FB97134E2758EA61E8140BC /* BackupStatusPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB065A819A2745FB03A11B34 /* BackupStatusPill.swift */; };
 		157D3C34B482965902670833 /* Cadence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C82790EE6BFC3FBB40BC6BB /* Cadence.swift */; };
-		1B84F8CAD057FCAC5E655CE6 /* WidgetNeon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840F278C9CA8199E414B5F56 /* WidgetNeon.swift */; };
-		1D756A34B88589A5D6E08CF4 /* WidgetShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD87EC1FFF800B5552A29629 /* WidgetShared.swift */; };
 		26D9449875DBB26BFE67F3DA /* ShareCompositionRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F74BBCDB9D58CFD3197CB751 /* ShareCompositionRenderer.swift */; };
 		326782C15EE36785C0FF4245 /* SideBySideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8987C806EF9A6FA15249ABA4 /* SideBySideView.swift */; };
-		37E12C918FD840978C9251C8 /* WidgetSnapshotPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5C5C10C78CEA7FB5258E6B /* WidgetSnapshotPublisher.swift */; };
-		38A35F0B15C00710E143347E /* WidgetShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD87EC1FFF800B5552A29629 /* WidgetShared.swift */; };
 		3AFAB9067409F8ECF2B49DEE /* TimelapseFrameNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689400BD9C56B0FCAFD57EA4 /* TimelapseFrameNormalizer.swift */; };
 		3C8AFCFFA8210E132E13F728 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0B5ABC48F124F52CCC27A6 /* Project.swift */; };
 		441FB24FF650CA51B512BB71 /* BebasNeue-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 51C8941051C44E65908753DA /* BebasNeue-Regular.ttf */; };
@@ -32,7 +28,6 @@
 		5CF1194DAE89A0B3DEF5F08A /* GlassModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C5C1E840DC2F0784E7B554A /* GlassModifiers.swift */; };
 		617E12D2F644BA53A181A446 /* CameraSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512F2543D6D1FB40B1056CED /* CameraSession.swift */; };
 		629484E8183046301D11BDD5 /* ReminderHabit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FEFE59918D96664EFA0E955 /* ReminderHabit.swift */; };
-		7B1D3C57B20DE2980955A424 /* BloomWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100207C8973F9CAF7997B793 /* BloomWidget.swift */; };
 		82E82A23A85ACC5F39B53BB5 /* ExportMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD7BE8E3A6A759FD472C675 /* ExportMenu.swift */; };
 		842D1BEE70F7082F1B82F56B /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A26AED9B71D3E4464CA76D6 /* CameraView.swift */; };
 		850885138AEC656717960889 /* PhotoViewerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1D593DF2DF28C1F0E46870 /* PhotoViewerView.swift */; };
@@ -42,7 +37,6 @@
 		8EF6BE4744AA7127151AFAE8 /* ProjectCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0A2EC4EB807E6E7E252C9E6 /* ProjectCard.swift */; };
 		906A65860C2D9400BFCCAD0B /* SubjectType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CF8E0260BF2F58DB45CC1B /* SubjectType.swift */; };
 		92525ABA9A1E9D6182C7DC1D /* Inter-VariableFont_opsz,wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9422F8C7734177AC08A660E /* Inter-VariableFont_opsz,wght.ttf */; };
-		936789DF2E0A6FA84A55E81D /* BloomWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30F207F71543F479E184997D /* BloomWidgetBundle.swift */; };
 		9820439525B2F386EF04BFC3 /* ProjectExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13418BAC85BBAB6C6BE552B8 /* ProjectExporter.swift */; };
 		9AB3494C9905375D92B73170 /* BackupStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6935DF6692B665EA5C6655D /* BackupStatus.swift */; };
 		9C448E65A2E8E330CFE06D6A /* DateFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 101E6054619F054D7D19A68B /* DateFormatting.swift */; };
@@ -61,7 +55,6 @@
 		D9DBF643B544DD0D2C397D3A /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE2F63C6B888A3FE5D566C7 /* Photo.swift */; };
 		DC1971575A7E2B09141720D2 /* TimelapseRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D361CCA0147E1D36A65CE8A /* TimelapseRenderer.swift */; };
 		DE25FE0AB3EBAB5186567C11 /* ReferenceShot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F0380F24DEED563CE95C27C /* ReferenceShot.swift */; };
-		E6AD30866921EC5718787D96 /* BloomWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8F3F5BC60AA3D9FB5C953313 /* BloomWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		E928670164DFE0FCCCF895E5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 41231063B50E15D80C370B93 /* Assets.xcassets */; };
 		E991774FD53454DF98C1D878 /* PhotoStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89849159341D16B3397F7044 /* PhotoStore.swift */; };
 		F6EE4A418162C392A062BEDB /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AF621CF6C9DFF7B5D0DE438 /* CameraPreview.swift */; };
@@ -70,13 +63,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		82AC5E83CFD9AA1C671BC023 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3401636D3F92771AF3940090 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = E5CD0C6D0BDCF2BEDD88E0DB;
-			remoteInfo = BloomWidget;
-		};
 		BB9493546B756724EC1A6E62 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3401636D3F92771AF3940090 /* Project object */;
@@ -86,23 +72,9 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		B129B973786B594B91585125 /* Embed Foundation Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-				E6AD30866921EC5718787D96 /* BloomWidget.appex in Embed Foundation Extensions */,
-			);
-			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0E3E617BA1B5D4180B638467 /* MotionTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionTracker.swift; sourceTree = "<group>"; };
-		100207C8973F9CAF7997B793 /* BloomWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloomWidget.swift; sourceTree = "<group>"; };
 		101E6054619F054D7D19A68B /* DateFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatting.swift; sourceTree = "<group>"; };
 		12443824F9A7BB64265B29B8 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		13418BAC85BBAB6C6BE552B8 /* ProjectExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectExporter.swift; sourceTree = "<group>"; };
@@ -113,7 +85,6 @@
 		2AF621CF6C9DFF7B5D0DE438 /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
 		2C82790EE6BFC3FBB40BC6BB /* Cadence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cadence.swift; sourceTree = "<group>"; };
 		2D218466FAC9AB6ADE4473C9 /* NeonPlayroom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonPlayroom.swift; sourceTree = "<group>"; };
-		30F207F71543F479E184997D /* BloomWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloomWidgetBundle.swift; sourceTree = "<group>"; };
 		41231063B50E15D80C370B93 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		41320B18E254F1EA4C1976AB /* ReminderScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderScheduler.swift; sourceTree = "<group>"; };
 		49CF7F7FEFF821AC39A7DDA4 /* ReviewSaveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSaveView.swift; sourceTree = "<group>"; };
@@ -128,13 +99,11 @@
 		70AD385C4FC3CE989F4E875A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		744BCEDD6F68451479D5CE04 /* TimelapseEndCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelapseEndCard.swift; sourceTree = "<group>"; };
 		790DD3A2EBE33AA73758C0FF /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
-		840F278C9CA8199E414B5F56 /* WidgetNeon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetNeon.swift; sourceTree = "<group>"; };
 		89849159341D16B3397F7044 /* PhotoStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoStore.swift; sourceTree = "<group>"; };
 		8987C806EF9A6FA15249ABA4 /* SideBySideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideBySideView.swift; sourceTree = "<group>"; };
 		8A26AED9B71D3E4464CA76D6 /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		8ACD398B52BFC76963741006 /* BloomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloomTests.swift; sourceTree = "<group>"; };
 		8EB21E33F4C4712C107215A4 /* CompareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompareView.swift; sourceTree = "<group>"; };
-		8F3F5BC60AA3D9FB5C953313 /* BloomWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BloomWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		90DC9DDDB10BF4C84189CD71 /* HapticEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticEngine.swift; sourceTree = "<group>"; };
 		9419E09A926D0A43AFAEA70B /* BloomApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloomApp.swift; sourceTree = "<group>"; };
 		98E8505DE57EAE80ADF460FE /* Bloom.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Bloom.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -152,7 +121,6 @@
 		BFD7BE8E3A6A759FD472C675 /* ExportMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportMenu.swift; sourceTree = "<group>"; };
 		C6C088CA0F825A62DCFA4E41 /* TimelapsePlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelapsePlayerView.swift; sourceTree = "<group>"; };
 		C7781015D398838206355241 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		CD87EC1FFF800B5552A29629 /* WidgetShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetShared.swift; sourceTree = "<group>"; };
 		D938CD012AB8FF3DC922FA16 /* ContactSheetRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactSheetRenderer.swift; sourceTree = "<group>"; };
 		DE29C460DD7130BF223682D2 /* ImageProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProcessing.swift; sourceTree = "<group>"; };
 		E0A2EC4EB807E6E7E252C9E6 /* ProjectCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectCard.swift; sourceTree = "<group>"; };
@@ -163,7 +131,6 @@
 		F74BBCDB9D58CFD3197CB751 /* ShareCompositionRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareCompositionRenderer.swift; sourceTree = "<group>"; };
 		F8A1A3E56349156AC674F7D4 /* ProjectEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectEditorView.swift; sourceTree = "<group>"; };
 		FB065A819A2745FB03A11B34 /* BackupStatusPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupStatusPill.swift; sourceTree = "<group>"; };
-		FB5C5C10C78CEA7FB5258E6B /* WidgetSnapshotPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSnapshotPublisher.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -210,15 +177,6 @@
 			path = Vision;
 			sourceTree = "<group>";
 		};
-		1B2B11D2D3DFA9C868C0C9DF /* Widget */ = {
-			isa = PBXGroup;
-			children = (
-				CD87EC1FFF800B5552A29629 /* WidgetShared.swift */,
-				FB5C5C10C78CEA7FB5258E6B /* WidgetSnapshotPublisher.swift */,
-			);
-			path = Widget;
-			sourceTree = "<group>";
-		};
 		1F89AC88B2C1F527B7C63554 /* Export */ = {
 			isa = PBXGroup;
 			children = (
@@ -256,16 +214,6 @@
 			path = Compare;
 			sourceTree = "<group>";
 		};
-		6BACAB074058DD7560D64B31 /* BloomWidget */ = {
-			isa = PBXGroup;
-			children = (
-				100207C8973F9CAF7997B793 /* BloomWidget.swift */,
-				30F207F71543F479E184997D /* BloomWidgetBundle.swift */,
-				840F278C9CA8199E414B5F56 /* WidgetNeon.swift */,
-			);
-			path = BloomWidget;
-			sourceTree = "<group>";
-		};
 		6D537EF03978780412763C26 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
@@ -282,7 +230,6 @@
 			children = (
 				98E8505DE57EAE80ADF460FE /* Bloom.app */,
 				B628C277CC0EF1014721EE72 /* BloomTests.xctest */,
-				8F3F5BC60AA3D9FB5C953313 /* BloomWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -322,7 +269,6 @@
 			children = (
 				0F3ED8B8CBBDA9A980DD7CD8 /* Bloom */,
 				300F33117BDCDE4A2611751B /* BloomTests */,
-				6BACAB074058DD7560D64B31 /* BloomWidget */,
 				7745B9C980A4222D26C996A5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -398,7 +344,6 @@
 				0D4B58A166B90617FBCCD501 /* Timelapse */,
 				7FC5FC0070DA712918FBF3CB /* Timeline */,
 				1A578FB7BD00D957FB7A201D /* Vision */,
-				1B2B11D2D3DFA9C868C0C9DF /* Widget */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -461,12 +406,10 @@
 			buildPhases = (
 				CB91124B23CBF4C891D56ECE /* Sources */,
 				5C026DA0CCF7776646E025FD /* Resources */,
-				B129B973786B594B91585125 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				CC8ABF071D1BA9521D6E8EE0 /* PBXTargetDependency */,
 			);
 			name = Bloom;
 			packageProductDependencies = (
@@ -493,23 +436,6 @@
 			productReference = B628C277CC0EF1014721EE72 /* BloomTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		E5CD0C6D0BDCF2BEDD88E0DB /* BloomWidget */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = C0C2798000D0C82E0A560CE5 /* Build configuration list for PBXNativeTarget "BloomWidget" */;
-			buildPhases = (
-				914BD5AD4A6DDCE12B99E3E3 /* Sources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = BloomWidget;
-			packageProductDependencies = (
-			);
-			productName = BloomWidget;
-			productReference = 8F3F5BC60AA3D9FB5C953313 /* BloomWidget.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -518,15 +444,12 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 2600;
-				TargetAttributes = {
-					03D63355804034CC102CA7FA = {
-						DevelopmentTeam = N5PS6LW9NY;
-						ProvisioningStyle = Automatic;
-					};
-					E5CD0C6D0BDCF2BEDD88E0DB = {
-						ProvisioningStyle = Automatic;
-					};
+			TargetAttributes = {
+				03D63355804034CC102CA7FA = {
+					DevelopmentTeam = N5PS6LW9NY;
+					ProvisioningStyle = Automatic;
 				};
+			};
 			};
 			buildConfigurationList = 20A451152C5A285780835559 /* Build configuration list for PBXProject "Bloom" */;
 			developmentRegion = en;
@@ -544,7 +467,6 @@
 			targets = (
 				03D63355804034CC102CA7FA /* Bloom */,
 				28172305F85ADDE844832563 /* BloomTests */,
-				E5CD0C6D0BDCF2BEDD88E0DB /* BloomWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -569,17 +491,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4D38D2398FDEFD7A3957BD0B /* BloomTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		914BD5AD4A6DDCE12B99E3E3 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				7B1D3C57B20DE2980955A424 /* BloomWidget.swift in Sources */,
-				936789DF2E0A6FA84A55E81D /* BloomWidgetBundle.swift in Sources */,
-				1B84F8CAD057FCAC5E655CE6 /* WidgetNeon.swift in Sources */,
-				1D756A34B88589A5D6E08CF4 /* WidgetShared.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -635,8 +546,6 @@
 				52E39AAA33CBE297FB615B0C /* TimelapsePlayerView.swift in Sources */,
 				DC1971575A7E2B09141720D2 /* TimelapseRenderer.swift in Sources */,
 				BF84EE0CE3EA07D9B7865B52 /* Typography.swift in Sources */,
-				38A35F0B15C00710E143347E /* WidgetShared.swift in Sources */,
-				37E12C918FD840978C9251C8 /* WidgetSnapshotPublisher.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -647,11 +556,6 @@
 			isa = PBXTargetDependency;
 			target = 03D63355804034CC102CA7FA /* Bloom */;
 			targetProxy = BB9493546B756724EC1A6E62 /* PBXContainerItemProxy */;
-		};
-		CC8ABF071D1BA9521D6E8EE0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = E5CD0C6D0BDCF2BEDD88E0DB /* BloomWidget */;
-			targetProxy = 82AC5E83CFD9AA1C671BC023 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -679,27 +583,6 @@
 			};
 			name = Debug;
 		};
-		716BA831287600D79A3877DA /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = BloomWidget/BloomWidget.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = N5PS6LW9NY;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = BloomWidget/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = app.bloomtracker.Bloom.BloomWidget;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Debug;
-		};
 		776BA4978067A1F22BA6D9AD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -718,27 +601,6 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Bloom.app/Bloom";
 			};
 			name = Debug;
-		};
-		780C796B2C37145F3450797F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = BloomWidget/BloomWidget.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = N5PS6LW9NY;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = BloomWidget/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = app.bloomtracker.Bloom.BloomWidget;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Release;
 		};
 		9379B91A760E7FB6CD594FDB /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -922,15 +784,6 @@
 			buildConfigurations = (
 				E0429592ED7557CC09918B79 /* Debug */,
 				C5E5FAC0008D33D5FE705A9E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
-		C0C2798000D0C82E0A560CE5 /* Build configuration list for PBXNativeTarget "BloomWidget" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				716BA831287600D79A3877DA /* Debug */,
-				780C796B2C37145F3450797F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

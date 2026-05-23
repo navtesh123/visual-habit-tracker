@@ -12,9 +12,6 @@ enum AppSettings {
         static let globalReminderHour       = "progress.globalReminderHour"
         static let globalReminderMinute     = "progress.globalReminderMinute"
         static let notificationsAuthorized  = "progress.notificationsAuthorized"
-        /// Optional `Project.id.uuidString`; if absent, widget falls back to
-        /// the most-recently-captured project.
-        static let pinnedWidgetProjectID    = "progress.pinnedWidgetProjectID"
     }
 
     static var hasCompletedOnboarding: Bool {
@@ -48,21 +45,6 @@ enum AppSettings {
         }
     }
 
-    static var pinnedWidgetProjectID: UUID? {
-        get {
-            guard let raw = UserDefaults.standard.string(forKey: Key.pinnedWidgetProjectID) else {
-                return nil
-            }
-            return UUID(uuidString: raw)
-        }
-        set {
-            if let value = newValue {
-                UserDefaults.standard.set(value.uuidString, forKey: Key.pinnedWidgetProjectID)
-            } else {
-                UserDefaults.standard.removeObject(forKey: Key.pinnedWidgetProjectID)
-            }
-        }
-    }
 }
 
 /// App Group container ID shared between the main app and `ProgressWidget`.
