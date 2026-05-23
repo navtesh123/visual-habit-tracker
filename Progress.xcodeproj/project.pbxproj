@@ -153,7 +153,7 @@
 		A4DF0C715D946036E33B76ED /* Shapes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shapes.swift; sourceTree = "<group>"; };
 		A6B51DE6AA916773014950DD /* Inter-VariableFont_opsz,wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-VariableFont_opsz,wght.ttf"; sourceTree = "<group>"; };
 		A82F1866C43C56C2613520DF /* AppLockController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockController.swift; sourceTree = "<group>"; };
-		A86FD1B5E7CDB3B08C17D713 /* Progress.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Progress.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A86FD1B5E7CDB3B08C17D713 /* BloomTrack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BloomTrack.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9DAA5DE771270E091E0D37C /* MotionTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionTracker.swift; sourceTree = "<group>"; };
 		AF856879C14DFBC6B98BA4D9 /* ProjectCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectCard.swift; sourceTree = "<group>"; };
 		B18D58290271D8B96F7182B9 /* ReviewSaveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSaveView.swift; sourceTree = "<group>"; };
@@ -451,7 +451,7 @@
 		F3FFE2AFBE2F02145D6D1062 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A86FD1B5E7CDB3B08C17D713 /* Progress.app */,
+				A86FD1B5E7CDB3B08C17D713 /* BloomTrack.app */,
 				3293FCA0C790DEE1EBFA0627 /* ProgressTests.xctest */,
 				1CC4A8B04CAC1939D69A4A19 /* ProgressWidget.appex */,
 			);
@@ -495,7 +495,7 @@
 			packageProductDependencies = (
 			);
 			productName = Progress;
-			productReference = A86FD1B5E7CDB3B08C17D713 /* Progress.app */;
+			productReference = A86FD1B5E7CDB3B08C17D713 /* BloomTrack.app */;
 			productType = "com.apple.product-type.application";
 		};
 		F2D8356C0652498D617D6DB2 /* ProgressTests */ = {
@@ -697,6 +697,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = app.progress.Progress;
+				PRODUCT_NAME = BloomTrack;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -838,6 +839,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = app.progress.Progress;
+				PRODUCT_NAME = BloomTrack;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;

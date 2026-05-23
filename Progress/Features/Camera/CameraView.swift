@@ -258,7 +258,7 @@ struct CameraView: View {
             Text("Camera access is off")
                 .displayStyle(28)
                 .foregroundStyle(NeonPlayroom.ghostWhite)
-            Text("Progress needs the camera to take your tracking photos. Your shots stay on this device.")
+            Text("Bloom Tracker needs the camera to take your tracking photos. Your shots stay on this device.")
                 .bodyStyle(14)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(NeonPlayroom.ghostWhite.opacity(0.7))

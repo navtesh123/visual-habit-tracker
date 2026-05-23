@@ -1,4 +1,4 @@
-# Progress — iOS Visual Progress Tracker
+# Bloom Tracker — iOS Visual Progress Tracker
 
 A single-purpose iOS app that lets you photograph the same subject repeatedly over time and see how it changes. Local-first, no accounts, photos stored in the app's private container.
 

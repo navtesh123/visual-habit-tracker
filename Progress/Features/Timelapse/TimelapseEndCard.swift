@@ -46,7 +46,7 @@ private struct EndCard: View {
                     .lineLimit(2)
                     .minimumScaleFactor(0.5)
                     .padding(.horizontal, 40)
-                Text("\(photoCount) photos · made with Progress")
+                Text("\(photoCount) photos · made with Bloom Tracker")
                     .bodyStyle(28, weight: .semibold)
                     .foregroundStyle(NeonPlayroom.midnightAbyss.opacity(0.7))
                 Spacer(minLength: 0)

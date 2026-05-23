@@ -32,7 +32,7 @@ targets:
     info:
       path: Progress/Resources/Info.plist
       properties:
-        CFBundleDisplayName: Progress
+        CFBundleDisplayName: Bloom Tracker
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "1"
         LSRequiresIPhoneOS: true
@@ -43,10 +43,10 @@ targets:
         UIRequiredDeviceCapabilities:
           - armv7
           - still-camera
-        NSCameraUsageDescription: "Progress uses the camera to take your progress photos. They stay on this device."
-        NSPhotoLibraryAddUsageDescription: "Progress can save exported timelapses and comparisons to your Photos library. Your tracked photos themselves stay on this device."
-        NSFaceIDUsageDescription: "Progress uses Face ID so only you can see your tracked photos."
-        NSUserTrackingUsageDescription: "Progress never tracks you. This permission is declined by default."
+        NSCameraUsageDescription: "Bloom Tracker uses the camera to take your progress photos. They stay on this device."
+        NSPhotoLibraryAddUsageDescription: "Bloom Tracker can save exported timelapses and comparisons to your Photos library. Your tracked photos themselves stay on this device."
+        NSFaceIDUsageDescription: "Bloom Tracker uses Face ID so only you can see your tracked photos."
+        NSUserTrackingUsageDescription: "Bloom Tracker never tracks you. This permission is declined by default."
         ITSAppUsesNonExemptEncryption: false
         UIAppFonts:
           - BebasNeue-Regular.ttf
@@ -95,7 +95,7 @@ targets:
     info:
       path: ProgressWidget/Info.plist
       properties:
-        CFBundleDisplayName: Progress
+        CFBundleDisplayName: Bloom Tracker
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:

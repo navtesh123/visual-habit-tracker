@@ -88,7 +88,7 @@ struct HomeView: View {
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
-            Text("Progress")
+            Text("Bloom Tracker")
                 .displayStyle(34)
                 .foregroundStyle(NeonPlayroom.ghostWhite)
         }

@@ -51,7 +51,7 @@ final class ExportCoordinator {
         defer { isExporting = false }
         do {
             let url = try ProjectExporter.exportAllProjectsZIP(projects: projects)
-            pendingShare = ExportArtifact(url: url, label: "Progress export")
+            pendingShare = ExportArtifact(url: url, label: "Bloom Tracker export")
         } catch {
             lastError = errorMessage(error)
         }

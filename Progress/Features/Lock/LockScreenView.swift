@@ -19,7 +19,7 @@ struct LockScreenView: View {
                     Image(systemName: iconName)
                         .font(.system(size: 64))
                         .foregroundStyle(NeonPlayroom.limeSqueeze)
-                    Text("Progress is locked")
+                    Text("Bloom Tracker is locked")
                         .displayStyle(40)
                         .foregroundStyle(NeonPlayroom.ghostWhite)
                     Text("Your photos are private. Unlock to continue.")

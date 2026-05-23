@@ -54,7 +54,7 @@ private struct ShareComposition: View {
                     .displayStyle(54)
                     .foregroundStyle(NeonPlayroom.midnightAbyss)
                 Spacer()
-                Text("Progress")
+                Text("Bloom Tracker")
                     .bodyStyle(18, weight: .semibold)
                     .foregroundStyle(NeonPlayroom.midnightAbyss.opacity(0.75))
             }

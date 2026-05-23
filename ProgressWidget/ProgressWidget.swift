@@ -17,7 +17,7 @@ struct ProgressWidget: Widget {
                     WidgetNeon.midnightAbyss
                 }
         }
-        .configurationDisplayName("Progress")
+        .configurationDisplayName("Bloom Tracker")
         .description("Your latest progress photo, at a glance.")
         .supportedFamilies([.systemMedium])
     }

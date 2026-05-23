@@ -64,7 +64,7 @@ final class AppLockController {
         do {
             let success = try await context.evaluatePolicy(
                 .deviceOwnerAuthentication,
-                localizedReason: "Unlock Progress to see your photos."
+                localizedReason: "Unlock Bloom Tracker to see your photos."
             )
             if success {
                 state = .authenticated

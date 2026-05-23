@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Progress</string>
+	<string>Bloom Tracker</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -36,13 +36,13 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Progress uses the camera to take your progress photos. They stay on this device.</string>
+	<string>Bloom Tracker uses the camera to take your progress photos. They stay on this device.</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Progress uses Face ID so only you can see your tracked photos.</string>
+	<string>Bloom Tracker uses Face ID so only you can see your tracked photos.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Progress can save exported timelapses and comparisons to your Photos library. Your tracked photos themselves stay on this device.</string>
+	<string>Bloom Tracker can save exported timelapses and comparisons to your Photos library. Your tracked photos themselves stay on this device.</string>
 	<key>NSUserTrackingUsageDescription</key>
-	<string>Progress never tracks you. This permission is declined by default.</string>
+	<string>Bloom Tracker never tracks you. This permission is declined by default.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>BebasNeue-Regular.ttf</string>
