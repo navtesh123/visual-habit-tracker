@@ -526,7 +526,7 @@
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					03D63355804034CC102CA7FA = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = N5PS6LW9NY;
 						ProvisioningStyle = Automatic;
 					};
 					E5CD0C6D0BDCF2BEDD88E0DB = {
@@ -671,7 +671,7 @@
 				CODE_SIGN_ENTITLEMENTS = Bloom/Resources/Bloom.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = N5PS6LW9NY;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Bloom/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
@@ -752,7 +752,7 @@
 				CODE_SIGN_ENTITLEMENTS = Bloom/Resources/Bloom.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = N5PS6LW9NY;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Bloom/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
