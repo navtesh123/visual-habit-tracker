@@ -1,5 +1,5 @@
 // PRD §3.7 / M9 — shared between the main app target and the
-// `ProgressWidget` extension. Contains only pure-data types and the App
+// `BloomWidget` extension. Contains only pure-data types and the App
 // Group constant; deliberately imports nothing beyond Foundation so the
 // widget binary stays lean.
 
@@ -25,7 +25,7 @@ enum WidgetSharedConstants {
     static let appGroupIdentifier = "group.app.bloomtracker.Bloom"
     static let snapshotFilename = "widget-snapshot.json"
     static let latestPhotoFilename = "widget-latest.jpg"
-    static let widgetKind = "ProgressWidget"
+    static let widgetKind = "BloomWidget"
 
     static func appGroupContainerURL() -> URL? {
         FileManager.default.containerURL(
@@ -35,7 +35,7 @@ enum WidgetSharedConstants {
 
     /// Deep-link URL the widget puts behind its "Tap to capture" affordance.
     /// The main app's `.onOpenURL` handler routes these to the camera.
-    static let captureURLScheme = "progress"
+    static let captureURLScheme = "bloom"
     static func captureURL(for projectID: UUID?) -> URL {
         if let projectID {
             return URL(string: "\(captureURLScheme)://capture/\(projectID.uuidString)")!

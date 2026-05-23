@@ -156,7 +156,7 @@ final class CloudKitBackupController {
     /// callers fall back to the local container.
     private static func buildCloudContainer() -> ModelContainer? {
         let configuration = ModelConfiguration(
-            "ProgressCloudStore",
+            "BloomCloudStore",
             cloudKitDatabase: .private(cloudContainerID)
         )
         do {

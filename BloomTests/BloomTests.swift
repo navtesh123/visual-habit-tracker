@@ -1,11 +1,11 @@
 import XCTest
-@testable import Progress
+@testable import Bloom
 
 /// Smoke tests for the M0–M5 data layer plus the pure-Swift surface of
 /// the deferred milestones (M6–M13). Anything that requires the iOS
 /// simulator runtime (CloudKit, UserNotifications, AVAssetWriter, Vision)
 /// is exercised at unit-test level via its pure-math seams only.
-final class ProgressTests: XCTestCase {
+final class BloomTests: XCTestCase {
 
     // MARK: - Existing M0–M5 smoke tests
 
@@ -155,14 +155,14 @@ final class ProgressTests: XCTestCase {
     func testWidgetCaptureURLEmbedsProjectID() {
         let id = UUID()
         let url = WidgetSharedConstants.captureURL(for: id)
-        XCTAssertEqual(url.scheme, "progress")
+        XCTAssertEqual(url.scheme, "bloom")
         XCTAssertEqual(url.host, "capture")
         XCTAssertTrue(url.path.contains(id.uuidString))
     }
 
     func testWidgetCaptureURLWithoutProjectID() {
         let url = WidgetSharedConstants.captureURL(for: nil)
-        XCTAssertEqual(url.scheme, "progress")
+        XCTAssertEqual(url.scheme, "bloom")
         XCTAssertEqual(url.host, "capture")
     }
 

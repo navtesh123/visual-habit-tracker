@@ -6,13 +6,13 @@ import WidgetKit
 import SwiftUI
 import UIKit
 
-struct ProgressWidget: Widget {
+struct BloomWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(
             kind: WidgetSharedConstants.widgetKind,
-            provider: ProgressTimelineProvider()
+            provider: BloomTimelineProvider()
         ) { entry in
-            ProgressWidgetView(entry: entry)
+            BloomWidgetView(entry: entry)
                 .containerBackground(for: .widget) {
                     WidgetNeon.midnightAbyss
                 }
@@ -25,17 +25,17 @@ struct ProgressWidget: Widget {
 
 // MARK: - Timeline provider
 
-struct ProgressTimelineProvider: TimelineProvider {
-    func placeholder(in context: Context) -> ProgressWidgetEntry {
-        ProgressWidgetEntry.placeholder
+struct BloomTimelineProvider: TimelineProvider {
+    func placeholder(in context: Context) -> BloomWidgetEntry {
+        BloomWidgetEntry.placeholder
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (ProgressWidgetEntry) -> Void) {
-        completion(ProgressWidgetEntry.load() ?? .placeholder)
+    func getSnapshot(in context: Context, completion: @escaping (BloomWidgetEntry) -> Void) {
+        completion(BloomWidgetEntry.load() ?? .placeholder)
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<ProgressWidgetEntry>) -> Void) {
-        let entry = ProgressWidgetEntry.load() ?? .placeholder
+    func getTimeline(in context: Context, completion: @escaping (Timeline<BloomWidgetEntry>) -> Void) {
+        let entry = BloomWidgetEntry.load() ?? .placeholder
         // Refresh every 30 minutes — main app also kicks
         // `WidgetCenter.shared.reloadTimelines` on every photo save.
         let refresh = Calendar.current.date(byAdding: .minute, value: 30, to: .now) ?? .now
@@ -45,12 +45,12 @@ struct ProgressTimelineProvider: TimelineProvider {
 
 // MARK: - Entry
 
-struct ProgressWidgetEntry: TimelineEntry {
+struct BloomWidgetEntry: TimelineEntry {
     let date: Date
     let snapshot: WidgetSnapshot
     let image: UIImage?
 
-    static let placeholder = ProgressWidgetEntry(
+    static let placeholder = BloomWidgetEntry(
         date: .now,
         snapshot: WidgetSnapshot(
             schema: WidgetSnapshot.currentSchema,
@@ -65,7 +65,7 @@ struct ProgressWidgetEntry: TimelineEntry {
         image: nil
     )
 
-    static func load() -> ProgressWidgetEntry? {
+    static func load() -> BloomWidgetEntry? {
         guard let containerURL = WidgetSharedConstants.appGroupContainerURL() else { return nil }
         let snapshotURL = containerURL.appendingPathComponent(WidgetSharedConstants.snapshotFilename)
         guard let data = try? Data(contentsOf: snapshotURL) else { return nil }
@@ -81,14 +81,14 @@ struct ProgressWidgetEntry: TimelineEntry {
                 image = UIImage(data: imageData)
             }
         }
-        return ProgressWidgetEntry(date: .now, snapshot: snapshot, image: image)
+        return BloomWidgetEntry(date: .now, snapshot: snapshot, image: image)
     }
 }
 
 // MARK: - View
 
-struct ProgressWidgetView: View {
-    let entry: ProgressWidgetEntry
+struct BloomWidgetView: View {
+    let entry: BloomWidgetEntry
 
     var body: some View {
         // Tap on the whole widget routes to capture for the pinned project.

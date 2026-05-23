@@ -25,7 +25,7 @@
 			<string>app.bloomtracker.Bloom.capture</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>progress</string>
+				<string>bloom</string>
 			</array>
 		</dict>
 	</array>

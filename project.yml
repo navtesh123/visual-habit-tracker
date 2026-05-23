@@ -1,6 +1,6 @@
-name: Progress
+name: Bloom
 options:
-  bundleIdPrefix: app.progress
+  bundleIdPrefix: app.bloomtracker
   deploymentTarget:
     iOS: "26.0"
   developmentLanguage: en
@@ -15,22 +15,22 @@ settings:
     ENABLE_USER_SCRIPT_SANDBOXING: YES
     SWIFT_STRICT_CONCURRENCY: minimal
 targets:
-  Progress:
+  Bloom:
     type: application
     platform: iOS
     deploymentTarget: "26.0"
     sources:
-      - path: Progress
+      - path: Bloom
         excludes:
           - "**/.DS_Store"
     resources:
-      - path: Progress/Resources/Assets.xcassets
-      - path: Progress/Resources/Fonts
+      - path: Bloom/Resources/Assets.xcassets
+      - path: Bloom/Resources/Fonts
         optional: true
     entitlements:
-      path: Progress/Resources/Progress.entitlements
+      path: Bloom/Resources/Bloom.entitlements
     info:
-      path: Progress/Resources/Info.plist
+      path: Bloom/Resources/Info.plist
       properties:
         CFBundleDisplayName: Bloom Tracker
         CFBundleShortVersionString: "1.0"
@@ -56,7 +56,7 @@ targets:
         # M9 — deep-link URL the widget puts behind its capture tile.
         CFBundleURLTypes:
           - CFBundleURLSchemes:
-              - progress
+              - bloom
             CFBundleURLName: app.bloomtracker.Bloom.capture
     settings:
       base:
@@ -68,32 +68,32 @@ targets:
         CODE_SIGN_STYLE: Automatic
         SUPPORTS_MACCATALYST: NO
         SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
-        CODE_SIGN_ENTITLEMENTS: Progress/Resources/Progress.entitlements
+        CODE_SIGN_ENTITLEMENTS: Bloom/Resources/Bloom.entitlements
     dependencies:
-      - target: ProgressWidget
+      - target: BloomWidget
         embed: true
 
   # PRD §3.7 / M9 — Home-screen widget extension. Shares the App Group with
   # the main app so it can read the widget snapshot + latest photo JPEG.
-  ProgressWidget:
+  BloomWidget:
     type: app-extension
     platform: iOS
     deploymentTarget: "26.0"
     sources:
-      - path: ProgressWidget
+      - path: BloomWidget
         excludes:
           - "**/.DS_Store"
           - "Info.plist"
-          - "ProgressWidget.entitlements"
+          - "BloomWidget.entitlements"
       # Shared types used by both targets. Keep this list short on purpose —
       # the widget binary must stay lean.
-      - path: Progress/Features/Widget/WidgetShared.swift
+      - path: Bloom/Features/Widget/WidgetShared.swift
     resources:
-      - path: Progress/Resources/Assets.xcassets
+      - path: Bloom/Resources/Assets.xcassets
     entitlements:
-      path: ProgressWidget/ProgressWidget.entitlements
+      path: BloomWidget/BloomWidget.entitlements
     info:
-      path: ProgressWidget/Info.plist
+      path: BloomWidget/Info.plist
       properties:
         CFBundleDisplayName: Bloom Tracker
         NSExtension:
@@ -105,16 +105,16 @@ targets:
         GENERATE_INFOPLIST_FILE: NO
         SKIP_INSTALL: YES
         CODE_SIGN_STYLE: Automatic
-        CODE_SIGN_ENTITLEMENTS: ProgressWidget/ProgressWidget.entitlements
+        CODE_SIGN_ENTITLEMENTS: BloomWidget/BloomWidget.entitlements
 
-  ProgressTests:
+  BloomTests:
     type: bundle.unit-test
     platform: iOS
     deploymentTarget: "26.0"
     sources:
-      - path: ProgressTests
+      - path: BloomTests
     dependencies:
-      - target: Progress
+      - target: Bloom
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.bloomtracker.BloomTests

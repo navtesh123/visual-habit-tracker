@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct ProgressApp: App {
+struct BloomApp: App {
     /// SwiftData container holds Projects, Photos, and ReferenceShots.
     /// UUIDs on every model make a future CloudKit/account migration clean (PRD §4.4).
     ///

@@ -12,14 +12,14 @@ A single-purpose iOS app that lets you photograph the same subject repeatedly ov
 
 ```bash
 xcodegen generate
-open Progress.xcodeproj
+open Bloom.xcodeproj
 ```
 
-Then build and run the `Progress` scheme on an iOS 26 simulator or device.
+Then build and run the `Bloom` scheme on an iOS 26 simulator or device.
 
 ## Architecture
 
-See [`Progress/`](Progress/) for source organization:
+See [`Bloom/`](Bloom/) for source organization:
 
 - `App/` — root navigation
 - `DesignSystem/` — Neon Playroom palette, typography, Liquid Glass modifiers
@@ -33,7 +33,7 @@ See [`Progress/`](Progress/) for source organization:
 The display font (Bebas Neue) and body font (Inter) are referenced by file name in `Info.plist`. To enable them visually:
 
 1. Download [Bebas Neue](https://fonts.google.com/specimen/Bebas+Neue) and [Inter](https://fonts.google.com/specimen/Inter).
-2. Drop the `.ttf` files into [`Progress/Resources/Fonts/`](Progress/Resources/Fonts/) matching the names listed in `project.yml`'s `UIAppFonts`.
+2. Drop the `.ttf` files into [`Bloom/Resources/Fonts/`](Bloom/Resources/Fonts/) matching the names listed in `project.yml`'s `UIAppFonts`.
 
 Until then, system font fallbacks render automatically.
 
@@ -46,5 +46,5 @@ Until then, system font fallbacks render automatically.
 ## Tests
 
 ```bash
-xcodebuild -scheme Progress -destination 'platform=iOS Simulator,name=iPhone 16' test
+xcodebuild -scheme Bloom -destination 'platform=iOS Simulator,name=iPhone 16' test
 ```

@@ -7,8 +7,8 @@ import WidgetKit
 import SwiftUI
 
 @main
-struct ProgressWidgetBundle: WidgetBundle {
+struct BloomWidgetBundle: WidgetBundle {
     var body: some Widget {
-        ProgressWidget()
+        BloomWidget()
     }
 }

@@ -105,7 +105,7 @@ enum ProjectExporter {
     /// One zip containing every project's originals. Used by the Settings
     /// "Export all projects" action.
     static func exportAllProjectsZIP(projects: [Project]) throws -> URL {
-        let stagingRoot = try makeStagingDirectory(name: "Progress-AllProjects")
+        let stagingRoot = try makeStagingDirectory(name: "Bloom-AllProjects")
         defer { try? FileManager.default.removeItem(at: stagingRoot) }
 
         for project in projects {
@@ -117,7 +117,7 @@ enum ProjectExporter {
                 try data.write(to: projectDir.appendingPathComponent(filename))
             }
         }
-        return try zipDirectory(stagingRoot, suggestedName: "Progress-AllProjects")
+        return try zipDirectory(stagingRoot, suggestedName: "Bloom-AllProjects")
     }
 
     // MARK: - Pure helpers (exposed for tests)

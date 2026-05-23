@@ -44,7 +44,7 @@ enum TimelapseRenderer {
             .joined(separator: "-")
         let timestamp = Int(Date.now.timeIntervalSince1970)
         return FileManager.default.temporaryDirectory
-            .appendingPathComponent("Progress-\(safeName)-\(timestamp).mp4")
+            .appendingPathComponent("Bloom-\(safeName)-\(timestamp).mp4")
     }
 
     /// Render `frames` at `speed` (×) playback. `1.0` shows each photo for
