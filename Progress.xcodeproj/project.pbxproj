@@ -118,7 +118,7 @@
 		275840396342B8EBD8810C93 /* BackupStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupStatus.swift; sourceTree = "<group>"; };
 		2C38230013B768C3ED025A41 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		2DB2476211F111D49370911C /* ProjectDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectDetailView.swift; sourceTree = "<group>"; };
-		3293FCA0C790DEE1EBFA0627 /* ProgressTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ProgressTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3293FCA0C790DEE1EBFA0627 /* ProgressTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProgressTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		337F60BF2F5A601C1F09F2D3 /* ProgressWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressWidgetBundle.swift; sourceTree = "<group>"; };
 		369748B5930C4E7A245AFCC2 /* ProgressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressTests.swift; sourceTree = "<group>"; };
 		3BF5914B19D582C0816F5128 /* GlassModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassModifiers.swift; sourceTree = "<group>"; };
@@ -674,7 +674,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = app.progress.ProgressTests;
+				PRODUCT_BUNDLE_IDENTIFIER = app.bloomtracker.BloomTests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Progress.app/Progress";
@@ -696,7 +696,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = app.progress.Progress;
+				PRODUCT_BUNDLE_IDENTIFIER = app.bloomtracker.Bloom;
 				PRODUCT_NAME = BloomTrack;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
@@ -716,7 +716,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = app.progress.ProgressTests;
+				PRODUCT_BUNDLE_IDENTIFIER = app.bloomtracker.BloomTests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Progress.app/Progress";
@@ -737,7 +737,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = app.progress.Progress.ProgressWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = app.bloomtracker.Bloom.BloomWidget;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -758,7 +758,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = app.progress.Progress.ProgressWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = app.bloomtracker.Bloom.BloomWidget;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -838,7 +838,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = app.progress.Progress;
+				PRODUCT_BUNDLE_IDENTIFIER = app.bloomtracker.Bloom;
 				PRODUCT_NAME = BloomTrack;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;

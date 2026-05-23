@@ -100,7 +100,7 @@ targets:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: app.bloomtracker.Bloom.ProgressWidget
+        PRODUCT_BUNDLE_IDENTIFIER: app.bloomtracker.Bloom.BloomWidget
         TARGETED_DEVICE_FAMILY: "1"
         GENERATE_INFOPLIST_FILE: NO
         SKIP_INSTALL: YES
