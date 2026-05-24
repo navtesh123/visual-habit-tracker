@@ -242,13 +242,20 @@ private struct PerProjectRow: View {
 
     @State private var reminderEnabled: Bool
     @State private var reminderTime: Date
+    @State private var reminderHabit: ReminderHabit
 
     init(project: Project) {
         self.project = project
         _reminderEnabled = State(initialValue: project.reminderTime != nil)
-        _reminderTime = State(initialValue: project.reminderTime ?? Calendar.current.date(
-            bySettingHour: 9, minute: 0, second: 0, of: .now
-        ) ?? .now)
+        let globalComps = AppSettings.globalReminderTime
+        let globalDefault = Calendar.current.date(
+            bySettingHour: globalComps.hour ?? 9,
+            minute: globalComps.minute ?? 0,
+            second: 0,
+            of: .now
+        ) ?? .now
+        _reminderTime = State(initialValue: project.reminderTime ?? globalDefault)
+        _reminderHabit = State(initialValue: project.reminderHabit)
     }
 
     var body: some View {
@@ -271,7 +278,14 @@ private struct PerProjectRow: View {
                     displayedComponents: .hourAndMinute
                 )
                 .onChange(of: reminderTime) { _, _ in apply(isOn: true) }
-                Text(project.reminderHabit.notificationBody(for: project.name))
+                Picker("Habit stack", selection: $reminderHabit) {
+                    ForEach(ReminderHabit.allCases) { habit in
+                        Text(habit.displayName).tag(habit)
+                    }
+                }
+                .pickerStyle(.menu)
+                .onChange(of: reminderHabit) { _, _ in apply(isOn: true) }
+                Text(reminderHabit.notificationBody(for: project.name))
                     .bodyStyle(11)
                     .foregroundStyle(NeonPlayroom.ghostWhite.opacity(0.6))
             }
@@ -281,6 +295,7 @@ private struct PerProjectRow: View {
 
     private func apply(isOn: Bool) {
         project.reminderTime = isOn ? reminderTime : nil
+        project.reminderHabit = reminderHabit
         try? context.save()
         Task {
             if isOn {

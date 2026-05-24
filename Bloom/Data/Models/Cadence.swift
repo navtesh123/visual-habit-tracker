@@ -28,6 +28,16 @@ enum Cadence: String, Codable, CaseIterable, Identifiable, Sendable {
         }
     }
 
+    /// Human-readable label for the reminder toggle in the project editor.
+    var reminderToggleLabel: String {
+        switch self {
+        case .daily:   return "Daily reminder"
+        case .fewDays: return "Reminder"
+        case .weekly:  return "Weekly reminder"
+        case .custom:  return "Reminder"
+        }
+    }
+
     /// How many days past expected before we surface a soft "behind cadence" chip.
     /// PRD §6 — never frame a gap as a failure; this is for nudges, not penalties.
     var gapThresholdDays: Int? {

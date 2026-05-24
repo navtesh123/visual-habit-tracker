@@ -27,9 +27,15 @@ struct ProjectEditorView: View {
     @State private var subjectType: SubjectType = .object
     @State private var cadence: Cadence = .weekly
     @State private var reminderEnabled: Bool = false
-    @State private var reminderTime: Date = Calendar.current.date(
-        bySettingHour: 9, minute: 0, second: 0, of: .now
-    ) ?? .now
+    @State private var reminderTime: Date = {
+        let comps = AppSettings.globalReminderTime
+        return Calendar.current.date(
+            bySettingHour: comps.hour ?? 9,
+            minute: comps.minute ?? 0,
+            second: 0,
+            of: .now
+        ) ?? .now
+    }()
     @State private var reminderHabit: ReminderHabit = .custom
     @State private var accent: AccentToken = .default
 
@@ -62,7 +68,7 @@ struct ProjectEditorView: View {
                 }
 
                 Section("Reminder") {
-                    Toggle("Daily reminder", isOn: $reminderEnabled)
+                    Toggle(cadence.reminderToggleLabel, isOn: $reminderEnabled)
                     if reminderEnabled {
                         DatePicker(
                             "Time",
