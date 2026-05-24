@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Shown for the brief window between iOS dropping the launch screen and
-/// SwiftData / CloudKit finishing their cold-start work. Matches the launch
+/// SwiftData finishing its cold-start work. Matches the launch
 /// screen's dark midnight background so the handoff is visually seamless —
 /// the user never sees a black flash and never perceives a frozen app.
 struct LaunchPlaceholderView: View {

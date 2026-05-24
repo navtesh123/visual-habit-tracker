@@ -1,5 +1,8 @@
 import SwiftUI
 import SwiftData
+import os
+
+private let localLaunchLogger = Logger(subsystem: "app.bloomtracker.Bloom", category: "Launch")
 
 @main
 struct BloomApp: App {
@@ -65,9 +68,23 @@ struct BloomApp: App {
     private func bootstrapIfNeeded() async {
         guard container == nil else { return }
         let started = launchStarted
-        let resolved = await CloudKitBackupController.bootstrap()
+        let resolved = await Task.detached(priority: .userInitiated) {
+            do {
+                return try ModelContainer(for: Project.self, Photo.self, ReferenceShot.self)
+            } catch {
+                fatalError("Failed to initialize local SwiftData container: \(error)")
+            }
+        }.value
         let elapsedMs = Int(started.duration(to: .now).milliseconds)
-        launchLogger.info("Container ready, \(elapsedMs, privacy: .public)ms after launch")
+        localLaunchLogger.info("Local container ready, \(elapsedMs, privacy: .public)ms after launch")
         container = resolved
+    }
+}
+
+extension Duration {
+    /// Approximate milliseconds for logging; not for accounting.
+    var milliseconds: Double {
+        let (seconds, attoseconds) = components
+        return Double(seconds) * 1_000 + Double(attoseconds) / 1_000_000_000_000_000
     }
 }

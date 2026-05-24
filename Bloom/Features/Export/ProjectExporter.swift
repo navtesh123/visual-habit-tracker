@@ -85,8 +85,8 @@ enum ProjectExporter {
 
         for photo in project.photosByDateAscending {
             guard
-                let data = PhotoStore.shared.loadFullImage(photo)?.heicData()
-                    ?? loadRawData(for: photo)
+                let data = loadRawData(for: photo)
+                    ?? PhotoStore.shared.loadFullImage(photo)?.heicData()
             else { continue }
             let filename = "\(formattedFilenameTimestamp(photo.capturedAt))-\(photo.id.uuidString.prefix(8)).heic"
             let destination = stagingDir.appendingPathComponent(filename)
@@ -157,8 +157,7 @@ enum ProjectExporter {
     }
 
     private static func loadRawData(for photo: Photo) -> Data? {
-        let docsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-        return docsURL.flatMap { try? Data(contentsOf: $0.appendingPathComponent(photo.fileRef)) }
+        PhotoAssetStore.shared.rawData(relativePath: photo.fileRef)
     }
 
     private static func makeStagingDirectory(name: String) throws -> URL {

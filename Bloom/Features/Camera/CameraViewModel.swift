@@ -14,6 +14,7 @@ final class CameraViewModel {
     var capturedImage: UIImage? = nil
     var lastCaptureMeta: CaptureMeta? = nil
     var permissionDenied: Bool = false
+    var captureErrorMessage: String? = nil
 
     // MARK: - Inputs
 
@@ -42,6 +43,7 @@ final class CameraViewModel {
         }
 
         do {
+            captureErrorMessage = nil
             isCapturing = true
             defer { isCapturing = false }
             let image = try await session.capture()
@@ -59,6 +61,7 @@ final class CameraViewModel {
             lastCaptureMeta = meta
         } catch {
             isCapturing = false
+            captureErrorMessage = "Bloom could not capture a photo. Please try again."
         }
     }
 

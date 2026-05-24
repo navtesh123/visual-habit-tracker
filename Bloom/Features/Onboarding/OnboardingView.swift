@@ -60,7 +60,7 @@ struct OnboardingView: View {
         OnboardingPanel(
             backdrop: NeonPlayroom.limeSqueeze,
             headline: "Your photos\nstay on\nthis phone.",
-            subhead: "Bloom Tracker doesn't add anything to your camera roll. iCloud backup is opt-in.",
+            subhead: "Bloom Tracker doesn't add anything to your camera roll. Export your projects any time.",
             actionLabel: cameraGranted == nil ? "Allow camera access" : "Camera access ready",
             actionDisabled: cameraGranted == true,
             action: requestCamera

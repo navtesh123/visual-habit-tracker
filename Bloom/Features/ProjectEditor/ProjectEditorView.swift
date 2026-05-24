@@ -17,6 +17,8 @@ struct ProjectEditorView: View {
     }
 
     let mode: Mode
+    var suggestedName: String? = nil
+    var submitLabel: String = "Save"
     /// Called with the resulting project on save.
     let onSave: (Project) -> Void
 
@@ -37,6 +39,7 @@ struct ProjectEditorView: View {
         ) ?? .now
     }()
     @State private var reminderHabit: ReminderHabit = .custom
+    @State private var errorMessage: String?
 
     var body: some View {
         NavigationStack {
@@ -92,12 +95,17 @@ struct ProjectEditorView: View {
                     Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Save", action: save)
+                    Button(submitLabel, action: save)
                         .bold()
                         .disabled(!isValid)
                 }
             }
             .onAppear(perform: loadIfEditing)
+            .alert("Bloom could not save this project", isPresented: errorBinding) {
+                Button("OK", role: .cancel) { errorMessage = nil }
+            } message: {
+                Text(errorMessage ?? "Please try again.")
+            }
         }
         .tint(NeonPlayroom.limeSqueeze)
     }
@@ -125,6 +133,8 @@ struct ProjectEditorView: View {
                 reminderEnabled = false
             }
             reminderHabit = project.reminderHabit
+        } else if name.isEmpty, let suggestedName {
+            name = suggestedName
         }
     }
 
@@ -132,28 +142,29 @@ struct ProjectEditorView: View {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
         let resolvedReminder: Date? = reminderEnabled ? reminderTime : nil
 
-        let project: Project
-        switch mode {
-        case .create:
-            project = Project(
-                name: trimmed,
-                subjectType: subjectType,
-                cadence: cadence,
-                reminderTime: resolvedReminder,
-                reminderHabit: reminderHabit
-            )
-            context.insert(project)
-        case .edit(let existing):
-            existing.name = trimmed
-            existing.subjectType = subjectType
-            existing.cadence = cadence
-            existing.reminderTime = resolvedReminder
-            existing.reminderHabit = reminderHabit
-            project = existing
-        }
-
         do {
-            try context.save()
+            let repository = ProjectRepository(context: context)
+            let project: Project
+            switch mode {
+            case .create:
+                project = try repository.createProject(
+                    name: trimmed,
+                    subjectType: subjectType,
+                    cadence: cadence,
+                    reminderTime: resolvedReminder,
+                    reminderHabit: reminderHabit
+                )
+            case .edit(let existing):
+                try repository.updateProject(
+                    existing,
+                    name: trimmed,
+                    subjectType: subjectType,
+                    cadence: cadence,
+                    reminderTime: resolvedReminder,
+                    reminderHabit: reminderHabit
+                )
+                project = existing
+            }
             // M8 — sync the local notification: schedule when reminders are
             // on, clear when they're off. Authorization is prompted in-context.
             Task {
@@ -166,8 +177,16 @@ struct ProjectEditorView: View {
             onSave(project)
             dismiss()
         } catch {
-            // Keep sheet open on save failure; production would surface an alert.
-            assertionFailure("Failed to save project: \(error)")
+            errorMessage = error.localizedDescription
         }
+    }
+
+    private var errorBinding: Binding<Bool> {
+        Binding(
+            get: { errorMessage != nil },
+            set: { isPresented in
+                if !isPresented { errorMessage = nil }
+            }
+        )
     }
 }

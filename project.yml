@@ -23,6 +23,7 @@ targets:
       - path: Bloom
         excludes:
           - "**/.DS_Store"
+          - "Features/Backup/**"
     resources:
       - path: Bloom/Resources/Assets.xcassets
       - path: Bloom/Resources/Fonts
@@ -41,19 +42,15 @@ targets:
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         UIRequiredDeviceCapabilities:
-          - armv7
+          - arm64
           - still-camera
         NSCameraUsageDescription: "Bloom Tracker uses the camera to take your progress photos. They stay on this device."
-        NSPhotoLibraryAddUsageDescription: "Bloom Tracker can save exported timelapses and comparisons to your Photos library. Your tracked photos themselves stay on this device."
-        NSFaceIDUsageDescription: "Bloom Tracker uses Face ID so only you can see your tracked photos."
-        NSUserTrackingUsageDescription: "Bloom Tracker never tracks you. This permission is declined by default."
         ITSAppUsesNonExemptEncryption: false
         UIAppFonts:
           - BebasNeue-Regular.ttf
           - Inter-Regular.ttf
           - Inter-Medium.ttf
           - Inter-SemiBold.ttf
-        # M9 — deep-link URL the widget puts behind its capture tile.
         CFBundleURLTypes:
           - CFBundleURLSchemes:
               - bloom
@@ -69,43 +66,6 @@ targets:
         SUPPORTS_MACCATALYST: NO
         SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
         CODE_SIGN_ENTITLEMENTS: Bloom/Resources/Bloom.entitlements
-    dependencies:
-      - target: BloomWidget
-        embed: true
-
-  # PRD §3.7 / M9 — Home-screen widget extension. Shares the App Group with
-  # the main app so it can read the widget snapshot + latest photo JPEG.
-  BloomWidget:
-    type: app-extension
-    platform: iOS
-    deploymentTarget: "26.0"
-    sources:
-      - path: BloomWidget
-        excludes:
-          - "**/.DS_Store"
-          - "Info.plist"
-          - "BloomWidget.entitlements"
-      # Shared types used by both targets. Keep this list short on purpose —
-      # the widget binary must stay lean.
-      - path: Bloom/Features/Widget/WidgetShared.swift
-    resources:
-      - path: Bloom/Resources/Assets.xcassets
-    entitlements:
-      path: BloomWidget/BloomWidget.entitlements
-    info:
-      path: BloomWidget/Info.plist
-      properties:
-        CFBundleDisplayName: Bloom Tracker
-        NSExtension:
-          NSExtensionPointIdentifier: com.apple.widgetkit-extension
-    settings:
-      base:
-        PRODUCT_BUNDLE_IDENTIFIER: app.bloomtracker.Bloom.BloomWidget
-        TARGETED_DEVICE_FAMILY: "1"
-        GENERATE_INFOPLIST_FILE: NO
-        SKIP_INSTALL: YES
-        CODE_SIGN_STYLE: Automatic
-        CODE_SIGN_ENTITLEMENTS: BloomWidget/BloomWidget.entitlements
 
   BloomTests:
     type: bundle.unit-test

@@ -1,5 +1,5 @@
-// PRD §3.8 — Settings. Five sections (Backup, Privacy, Reminders, Export,
-// About) that together expose every milestone toggle in one calm surface.
+// PRD §3.8 — Settings. Local-first v1 exposes privacy, reminders, export,
+// and about in one calm surface.
 //
 // Layering rule (PRD §7.1): the screen lives inside a system Form, which
 // adopts iOS 26 Liquid Glass automatically. Content within rows stays in
@@ -14,17 +14,15 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @Query(sort: \Project.createdAt, order: .reverse) private var projects: [Project]
 
-    @Bindable private var backup = CloudKitBackupController.shared
     @Bindable private var reminders = ReminderScheduler.shared
     @State private var exportCoordinator = ExportCoordinator()
 
-    @State private var backupEnabled: Bool = AppSettings.cloudKitBackupEnabled
     @State private var globalReminderTime: Date = SettingsView.componentsToDate(AppSettings.globalReminderTime)
 
     var body: some View {
         NavigationStack {
             Form {
-                backupSection
+                privacySection
                 remindersSection
                 exportSection
                 aboutSection
@@ -43,56 +41,37 @@ struct SettingsView: View {
                 ExportShareSheet(url: artifact.url)
                     .presentationDetents([.medium, .large])
             }
+            .alert("Export failed", isPresented: exportErrorBinding) {
+                Button("OK", role: .cancel) { exportCoordinator.lastError = nil }
+            } message: {
+                Text(exportCoordinator.lastError ?? "Please try again.")
+            }
             .task {
                 await reminders.refreshAuthorizationState()
-                backup.refresh()
             }
         }
         .tint(NeonPlayroom.limeSqueeze)
     }
 
-    // MARK: - Backup
+    // MARK: - Privacy
 
-    private var backupSection: some View {
+    private var privacySection: some View {
         Section {
-            Toggle("Back up to iCloud", isOn: $backupEnabled)
-                .onChange(of: backupEnabled) { _, isOn in
-                    Task {
-                        if isOn {
-                            await backup.enable()
-                        } else {
-                            backup.disable()
-                        }
-                    }
-                }
-
             statusRow(
-                icon: iconForBackup,
-                title: backup.status.headline,
-                subtitle: backup.status.subtitle
+                icon: "lock.doc",
+                title: "Local-only photo library",
+                subtitle: "Originals and thumbnails stay in Bloom's private app folder."
             )
-
-            Button {
-                if let url = URL(string: UIApplication.openSettingsURLString) {
-                    UIApplication.shared.open(url)
-                }
-            } label: {
-                Label("Manage iCloud Storage…", systemImage: "externaldrive.connected.to.line.below")
-            }
+            statusRow(
+                icon: "location.slash",
+                title: "Location metadata stripped",
+                subtitle: "Captured photos are re-encoded before save so GPS data is not kept."
+            )
         } header: {
-            Text("Backup")
+            Text("Privacy")
         } footer: {
-            Text("iCloud backup is optional. Your photos stay on this device either way — and you can always export them yourself from below.")
+            Text("iCloud backup is not part of this v1 local build. You can export all projects any time.")
                 .bodyStyle(12)
-        }
-    }
-
-    private var iconForBackup: String {
-        switch backup.status {
-        case .active, .syncing: return "checkmark.icloud"
-        case .paused: return "exclamationmark.icloud"
-        case .error: return "exclamationmark.icloud"
-        case .disabled: return "icloud.slash"
         }
     }
 
@@ -155,7 +134,7 @@ struct SettingsView: View {
         } header: {
             Text("Export")
         } footer: {
-            Text("Export a zip of all your projects any time, whether or not iCloud backup is on.")
+            Text("Export a zip of all your project originals any time.")
                 .bodyStyle(12)
         }
     }
@@ -173,7 +152,7 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text("Your photos stay on this device.")
                     .bodyStyle(14, weight: .semibold)
-                Text("Locations are stripped before save. Notifications are optional. iCloud backup is opt-in. You can export everything any time.")
+                Text("Locations are stripped before save. Notifications are optional. You can export everything any time.")
                     .bodyStyle(12)
                     .foregroundStyle(NeonPlayroom.ghostWhite.opacity(0.65))
             }
@@ -214,6 +193,15 @@ struct SettingsView: View {
             second: 0,
             of: .now
         ) ?? .now
+    }
+
+    private var exportErrorBinding: Binding<Bool> {
+        Binding(
+            get: { exportCoordinator.lastError != nil },
+            set: { isPresented in
+                if !isPresented { exportCoordinator.lastError = nil }
+            }
+        )
     }
 }
 

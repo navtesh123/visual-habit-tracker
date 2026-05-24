@@ -119,6 +119,10 @@ final class ReminderScheduler {
         center.removePendingNotificationRequests(withIdentifiers: [identifier(for: project)])
     }
 
+    func removeReminders(forProjectID projectID: UUID) async {
+        center.removePendingNotificationRequests(withIdentifiers: [Self.identifier(forProjectID: projectID)])
+    }
+
     /// Sync all reminders against the current project list. Call from
     /// app-launch after the store loads so deleted projects don't keep
     /// firing stale notifications.
@@ -221,7 +225,11 @@ final class ReminderScheduler {
     // MARK: - Identifier convention
 
     nonisolated static func identifier(for project: Project) -> String {
-        "progress.reminder.\(project.id.uuidString)"
+        identifier(forProjectID: project.id)
+    }
+
+    nonisolated static func identifier(forProjectID projectID: UUID) -> String {
+        "progress.reminder.\(projectID.uuidString)"
     }
 
     nonisolated func identifier(for project: Project) -> String {

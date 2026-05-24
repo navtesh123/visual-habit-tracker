@@ -1,9 +1,10 @@
 import XCTest
+import SwiftData
 @testable import Bloom
 
 /// Smoke tests for the M0–M5 data layer plus the pure-Swift surface of
-/// the deferred milestones (M6–M13). Anything that requires the iOS
-/// simulator runtime (CloudKit, UserNotifications, AVAssetWriter, Vision)
+/// the deferred milestones (M6–M13). Anything that requires device services
+/// (camera, UserNotifications, AVAssetWriter, Vision)
 /// is exercised at unit-test level via its pure-math seams only.
 final class BloomTests: XCTestCase {
 
@@ -91,6 +92,103 @@ final class BloomTests: XCTestCase {
         XCTAssertTrue(stamp.contains("-"))
     }
 
+    // MARK: - Local service seams
+
+    @MainActor
+    func testProjectRepositoryCreatesProjectInMemory() throws {
+        let context = try makeInMemoryContext()
+        let repository = ProjectRepository(context: context)
+
+        let project = try repository.createProject(
+            name: "Plant",
+            subjectType: .object,
+            cadence: .weekly,
+            reminderTime: nil,
+            reminderHabit: .custom
+        )
+
+        let fetched = try context.fetch(FetchDescriptor<Project>())
+        XCTAssertEqual(fetched.map(\.id), [project.id])
+        XCTAssertEqual(project.cachedPhotoCount, 0)
+    }
+
+    @MainActor
+    func testProjectRepositoryInsertsPhotoAndRefreshesSummary() throws {
+        let context = try makeInMemoryContext()
+        let repository = ProjectRepository(context: context)
+        let project = try repository.createProject(
+            name: "Plant",
+            subjectType: .object,
+            cadence: .weekly,
+            reminderTime: nil,
+            reminderHabit: .custom
+        )
+        let id = UUID()
+        let capturedAt = Date(timeIntervalSince1970: 1_700_000_000)
+
+        let photo = try repository.insertPhoto(
+            id: id,
+            project: project,
+            fileRef: "Photos/project/photo.heic",
+            thumbRef: "Photos/project/thumbs/photo.heic",
+            meta: CaptureMeta(capturedAt: capturedAt)
+        )
+
+        XCTAssertEqual(photo.id, id)
+        XCTAssertEqual(project.cachedPhotoCount, 1)
+        XCTAssertEqual(project.cachedLatestPhotoID, id)
+        XCTAssertEqual(project.cachedLatestPhotoCapturedAt, capturedAt)
+    }
+
+    @MainActor
+    func testProjectRepositoryDeletesPhotoAndRefreshesSummary() throws {
+        let context = try makeInMemoryContext()
+        let repository = ProjectRepository(context: context)
+        let project = try repository.createProject(
+            name: "Plant",
+            subjectType: .object,
+            cadence: .weekly,
+            reminderTime: nil,
+            reminderHabit: .custom
+        )
+        let first = try repository.insertPhoto(
+            id: UUID(),
+            project: project,
+            fileRef: "Photos/project/first.heic",
+            thumbRef: "Photos/project/thumbs/first.heic",
+            meta: CaptureMeta(capturedAt: Date(timeIntervalSince1970: 100))
+        )
+        let second = try repository.insertPhoto(
+            id: UUID(),
+            project: project,
+            fileRef: "Photos/project/second.heic",
+            thumbRef: "Photos/project/thumbs/second.heic",
+            meta: CaptureMeta(capturedAt: Date(timeIntervalSince1970: 200))
+        )
+
+        try repository.deletePhoto(second)
+
+        XCTAssertEqual(project.cachedPhotoCount, 1)
+        XCTAssertEqual(project.cachedLatestPhotoID, first.id)
+    }
+
+    func testPhotoAssetStoreFileRefsPreserveExistingLayout() {
+        let store = PhotoAssetStore(documentsURL: URL(fileURLWithPath: "/tmp/BloomTests"))
+        let projectID = UUID(uuidString: "11111111-1111-1111-1111-111111111111")!
+        let photoID = UUID(uuidString: "22222222-2222-2222-2222-222222222222")!
+
+        let refs = store.fileRefs(projectID: projectID, photoID: photoID)
+
+        XCTAssertEqual(
+            refs.fileRef,
+            "Photos/11111111-1111-1111-1111-111111111111/22222222-2222-2222-2222-222222222222.heic"
+        )
+        XCTAssertEqual(
+            refs.thumbRef,
+            "Photos/11111111-1111-1111-1111-111111111111/thumbs/22222222-2222-2222-2222-222222222222.heic"
+        )
+    }
+
     // MARK: - M13 AutoAlignProcessor math
 
     func testAutoAlignIsIdentityWhenLandmarksMatch() {
@@ -121,56 +219,15 @@ final class BloomTests: XCTestCase {
         XCTAssertEqual(alignment.rotationRadians, .pi / 4, accuracy: 1e-6)
     }
 
-    // MARK: - M9 widget snapshot type
+    // MARK: - Helpers
 
-    func testWidgetSnapshotRoundTripsThroughCodable() throws {
-        let snapshot = WidgetSnapshot(
-            schema: WidgetSnapshot.currentSchema,
-            projectID: UUID(),
-            projectName: "Beard",
-            accentTokenRaw: "sunsetOrange",
-            photoCount: 7,
-            lastCaptureAt: Date(timeIntervalSince1970: 1_700_000_000),
-            cumulativeThisMonth: 3,
-            latestPhotoJPEGRelativePath: "widget-latest.jpg"
+    @MainActor
+    private func makeInMemoryContext() throws -> ModelContext {
+        let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(
+            for: Project.self, Photo.self, ReferenceShot.self,
+            configurations: configuration
         )
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .iso8601
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-
-        let data = try encoder.encode(snapshot)
-        let decoded = try decoder.decode(WidgetSnapshot.self, from: data)
-        XCTAssertEqual(decoded, snapshot)
-    }
-
-    func testWidgetCaptureURLEmbedsProjectID() {
-        let id = UUID()
-        let url = WidgetSharedConstants.captureURL(for: id)
-        XCTAssertEqual(url.scheme, "bloom")
-        XCTAssertEqual(url.host, "capture")
-        XCTAssertTrue(url.path.contains(id.uuidString))
-    }
-
-    func testWidgetCaptureURLWithoutProjectID() {
-        let url = WidgetSharedConstants.captureURL(for: nil)
-        XCTAssertEqual(url.scheme, "bloom")
-        XCTAssertEqual(url.host, "capture")
-    }
-
-    // MARK: - M7 BackupStatus copy semantics
-
-    func testBackupStatusOKReflectsActiveStates() {
-        XCTAssertTrue(BackupStatus.active(lastSynced: nil).isOK)
-        XCTAssertTrue(BackupStatus.syncing.isOK)
-        XCTAssertFalse(BackupStatus.disabled.isOK)
-        XCTAssertFalse(BackupStatus.paused(reason: .quotaExceeded).isOK)
-        XCTAssertFalse(BackupStatus.error(message: "oops").isOK)
-    }
-
-    func testBackupQuotaCopyMentionsFull() {
-        let pill = BackupStatus.paused(reason: .quotaExceeded)
-        XCTAssertTrue(pill.headline.lowercased().contains("iclou"))
-        XCTAssertTrue(pill.headline.lowercased().contains("full"))
+        return ModelContext(container)
     }
 }

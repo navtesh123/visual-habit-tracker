@@ -12,8 +12,7 @@ struct ProjectDetailView: View {
     @State private var showTimelapse: Bool = false
     @State private var showProgressToast: Bool = false
     @State private var lastSeenPhotoCount: Int = 0
-
-    private let backup = CloudKitBackupController.shared
+    @State private var errorMessage: String?
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 3)
 
@@ -94,6 +93,11 @@ struct ProjectDetailView: View {
                 onDelete: { delete(photo) },
                 onRetake: { showCamera = true }
             )
+        }
+        .alert("Bloom could not finish that action", isPresented: errorBinding) {
+            Button("OK", role: .cancel) { errorMessage = nil }
+        } message: {
+            Text(errorMessage ?? "Please try again.")
         }
         .onAppear {
             lastSeenPhotoCount = project.photos.count
@@ -299,8 +303,17 @@ struct ProjectDetailView: View {
         do {
             try PhotoStore.shared.delete(photo, in: context)
         } catch {
-            assertionFailure("Failed to delete photo: \(error)")
+            errorMessage = error.localizedDescription
         }
+    }
+
+    private var errorBinding: Binding<Bool> {
+        Binding(
+            get: { errorMessage != nil },
+            set: { isPresented in
+                if !isPresented { errorMessage = nil }
+            }
+        )
     }
 }
 
@@ -310,32 +323,19 @@ private struct PhotoThumbnail: View {
     @State private var image: UIImage?
 
     var body: some View {
-        ZStack(alignment: .topTrailing) {
-            ZStack {
-                NeonPlayroom.midnightAbyss
-                if let image {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFill()
-                } else {
-                    ProgressView()
-                        .tint(NeonPlayroom.ghostWhite.opacity(0.6))
-                }
-            }
-            .aspectRatio(1, contentMode: .fill)
-            .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-
-            // M7 — per-photo sync status. Hidden when backup is off so it
-            // doesn't add visual noise for users who never opt in.
-            if let badgeIcon = backupBadgeIcon {
-                Image(systemName: badgeIcon)
-                    .font(.system(size: 10, weight: .semibold))
-                    .padding(4)
-                    .foregroundStyle(NeonPlayroom.ghostWhite)
-                    .background(NeonPlayroom.midnightAbyss.opacity(0.65), in: Circle())
-                    .padding(4)
+        ZStack {
+            NeonPlayroom.midnightAbyss
+            if let image {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                ProgressView()
+                    .tint(NeonPlayroom.ghostWhite.opacity(0.6))
             }
         }
+        .aspectRatio(1, contentMode: .fill)
+        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
         .task(id: photo.id) {
             // Decode off the main actor — synchronous file read + HEIC
             // decode otherwise piles onto the main thread when many cells
@@ -343,10 +343,5 @@ private struct PhotoThumbnail: View {
             // (PRD §3.5).
             image = await PhotoStore.shared.loadThumbAsync(relativePath: photo.thumbRef)
         }
-    }
-
-    private var backupBadgeIcon: String? {
-        let state = CloudKitBackupController.shared.syncState(for: photo)
-        return state.systemImage
     }
 }

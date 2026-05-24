@@ -25,6 +25,7 @@ struct ReviewSaveView: View {
     @State private var noteFieldVisible: Bool = false
     @State private var isSaving: Bool = false
     @State private var previousImage: UIImage?
+    @State private var errorMessage: String?
 
     // M13 — auto-align toggle. Default off in v1 (per PRD §3.3, "v2
     // enhancement"). Only shown for face / body subjects.
@@ -77,6 +78,11 @@ struct ReviewSaveView: View {
             if let previous = project.latestPhoto {
                 previousImage = await PhotoStore.shared.loadFullImageAsync(previous)
             }
+        }
+        .alert("Bloom could not save this photo", isPresented: errorBinding) {
+            Button("OK", role: .cancel) { errorMessage = nil }
+        } message: {
+            Text(errorMessage ?? "Please try again.")
         }
     }
 
@@ -282,7 +288,17 @@ struct ReviewSaveView: View {
                 dismiss()
             } catch {
                 isSaving = false
+                errorMessage = error.localizedDescription
             }
         }
+    }
+
+    private var errorBinding: Binding<Bool> {
+        Binding(
+            get: { errorMessage != nil },
+            set: { isPresented in
+                if !isPresented { errorMessage = nil }
+            }
+        )
     }
 }

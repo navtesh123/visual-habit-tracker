@@ -21,6 +21,7 @@ struct TimelapsePlayerView: View {
 
     @State private var isRendering: Bool = false
     @State private var sharePayload: ShareableMP4?
+    @State private var errorMessage: String?
 
     private let speeds: [Double] = [0.5, 1.0, 2.0, 4.0]
 
@@ -46,6 +47,11 @@ struct TimelapsePlayerView: View {
         .sheet(item: $sharePayload) { payload in
             VideoShareSheet(url: payload.url)
                 .presentationDetents([.medium, .large])
+        }
+        .alert("Timelapse failed", isPresented: errorBinding) {
+            Button("OK", role: .cancel) { errorMessage = nil }
+        } message: {
+            Text(errorMessage ?? "Please try again.")
         }
     }
 
@@ -231,7 +237,8 @@ struct TimelapsePlayerView: View {
         let ordered = project.photosByDateAscending
         var collected: [TimelapseFrame] = []
         for photo in ordered {
-            if let image = PhotoStore.shared.loadFullImage(photo) {
+            guard !Task.isCancelled else { return }
+            if let image = await PhotoStore.shared.loadFullImageAsync(photo) {
                 collected.append(TimelapseFrame(image: image, capturedAt: photo.capturedAt))
             }
         }
@@ -256,10 +263,17 @@ struct TimelapsePlayerView: View {
             )
             await MainActor.run { sharePayload = ShareableMP4(url: url) }
         } catch {
-            // Errors are surfaced silently in v1; a future iteration would
-            // toast a non-blocking failure with a "try again" affordance.
-            assertionFailure("Timelapse render failed: \(error)")
+            errorMessage = error.localizedDescription
         }
+    }
+
+    private var errorBinding: Binding<Bool> {
+        Binding(
+            get: { errorMessage != nil },
+            set: { isPresented in
+                if !isPresented { errorMessage = nil }
+            }
+        )
     }
 }
 

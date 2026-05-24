@@ -19,9 +19,11 @@ struct CameraView: View {
     @State private var motion = MotionTracker()
     @State private var viewModel: CameraViewModel
     @State private var didPresentReview: Bool = false
+    private let referencePhoto: Photo?
 
     init(project: Project) {
         self.project = project
+        self.referencePhoto = project.overlayReferencePhoto
         _viewModel = State(initialValue: CameraViewModel(
             referencePhoto: project.overlayReferencePhoto
         ))
@@ -33,6 +35,8 @@ struct CameraView: View {
 
             CameraPreview(session: session.session)
                 .ignoresSafeArea()
+
+            GhostOverlayView(referencePhoto: referencePhoto)
 
             RuleOfThirdsGrid()
                 .ignoresSafeArea()
@@ -95,6 +99,11 @@ struct CameraView: View {
                 dismiss()
             }
         }
+        .alert("Camera capture failed", isPresented: captureErrorBinding) {
+            Button("OK", role: .cancel) { viewModel.captureErrorMessage = nil }
+        } message: {
+            Text(viewModel.captureErrorMessage ?? "Please try again.")
+        }
     }
 
     // MARK: - Top bar
@@ -120,6 +129,10 @@ struct CameraView: View {
                     .foregroundStyle(NeonPlayroom.ghostWhite)
                 if let zoom = viewModel.lockedZoom {
                     Text(String(format: "Zoom %.1f×", zoom))
+                        .bodyStyle(11, weight: .medium)
+                        .foregroundStyle(NeonPlayroom.ghostWhite.opacity(0.7))
+                } else if referencePhoto != nil {
+                    Text("Reference overlay")
                         .bodyStyle(11, weight: .medium)
                         .foregroundStyle(NeonPlayroom.ghostWhite.opacity(0.7))
                 }
@@ -209,6 +222,15 @@ struct CameraView: View {
                     viewModel.capturedImage = nil
                     viewModel.lastCaptureMeta = nil
                 }
+            }
+        )
+    }
+
+    private var captureErrorBinding: Binding<Bool> {
+        Binding(
+            get: { viewModel.captureErrorMessage != nil },
+            set: { isPresented in
+                if !isPresented { viewModel.captureErrorMessage = nil }
             }
         )
     }

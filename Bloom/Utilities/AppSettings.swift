@@ -2,9 +2,9 @@ import Foundation
 
 /// Centralized `UserDefaults` keys + a typed accessor.
 ///
-/// The Settings, Onboarding, Lock, Backup, and Widget surfaces all read /
-/// write these keys; collecting them in one file keeps copy/paste typos out
-/// of the codebase and gives an obvious diff surface for migrations.
+/// Settings, onboarding, and reminders all read/write these keys; collecting
+/// them in one file keeps copy/paste typos out of the codebase and gives an
+/// obvious diff surface for migrations.
 enum AppSettings {
     enum Key {
         static let hasCompletedOnboarding   = "progress.hasCompletedOnboarding"
@@ -54,10 +54,4 @@ enum AppSettings {
         }
     }
 
-}
-
-/// App Group container ID shared between the main app and `ProgressWidget`.
-/// Declared in both targets' `.entitlements` files.
-enum AppGroup {
-    static let identifier = "group.app.bloomtracker.Bloom"
 }

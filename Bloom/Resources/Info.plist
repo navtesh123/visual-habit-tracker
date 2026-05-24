@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Bloom</string>
+	<string>Bloom Tracker</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -37,14 +37,13 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Bloom Tracker uses the camera to take your progress photos. They stay on this device.</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string>Bloom Tracker uses Face ID so only you can see your tracked photos.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Bloom Tracker can save exported timelapses and comparisons to your Photos library. Your tracked photos themselves stay on this device.</string>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>Bloom Tracker never tracks you. This permission is declined by default.</string>
 	<key>UIAppFonts</key>
-	<array/>
+	<array>
+		<string>BebasNeue-Regular.ttf</string>
+		<string>Inter-Regular.ttf</string>
+		<string>Inter-Medium.ttf</string>
+		<string>Inter-SemiBold.ttf</string>
+	</array>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>
@@ -52,7 +51,7 @@
 	</dict>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
-		<string>armv7</string>
+		<string>arm64</string>
 		<string>still-camera</string>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>

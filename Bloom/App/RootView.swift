@@ -8,7 +8,6 @@ import SwiftData
 /// can render before the SwiftData container is ready on first launch.
 struct RootView: View {
     @Environment(\.modelContext) private var context
-    @Environment(\.scenePhase) private var scenePhase
 
     /// Owned by `BloomApp` so onboarding completion (which lives outside
     /// this view) can flip the bit that opens the project editor sheet
@@ -54,11 +53,6 @@ struct RootView: View {
             for: UIAccessibility.reduceMotionStatusDidChangeNotification
         )) { _ in
             reduceMotion = UIAccessibility.isReduceMotionEnabled
-        }
-        .onChange(of: scenePhase) { _, phase in
-            if phase == .active {
-                CloudKitBackupController.shared.refresh()
-            }
         }
         .task(priority: .utility) {
             // Defer reminder resync past first paint. The system calls

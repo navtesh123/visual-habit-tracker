@@ -1,5 +1,37 @@
 import SwiftUI
 
+/// Semi-transparent reference image over the camera preview.
+///
+/// Used after the first capture so users can line up the same subject without
+/// the app needing to do expensive live vision work.
+struct GhostOverlayView: View {
+    let referencePhoto: Photo?
+    @State private var image: UIImage?
+
+    var body: some View {
+        Group {
+            if let image {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+                    .opacity(0.28)
+                    .blendMode(.screen)
+                    .saturation(0.25)
+                    .contrast(1.08)
+            }
+        }
+        .ignoresSafeArea()
+        .allowsHitTesting(false)
+        .task(id: referencePhoto?.id) {
+            guard let referencePhoto else {
+                image = nil
+                return
+            }
+            image = await PhotoStore.shared.loadFullImageAsync(referencePhoto)
+        }
+    }
+}
+
 /// Rule-of-thirds grid drawn over the live preview to help centering (PRD §3.3).
 struct RuleOfThirdsGrid: View {
     var lineColor: Color = NeonPlayroom.ghostWhite.opacity(0.35)

@@ -15,25 +15,11 @@ struct HomeView: View {
     @State private var pickerPresented: Bool = false
     @State private var pendingCaptureProject: Project?
     @State private var showSettings: Bool = false
-
-    @Bindable private var backup = CloudKitBackupController.shared
+    @State private var errorMessage: String?
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             content
-
-            VStack(spacing: 12) {
-                // PRD §4.3 — calm "Backup paused" pill above the FAB region.
-                if !backup.status.isOK && backup.status != .disabled {
-                    BackupStatusPill(status: backup.status) {
-                        showSettings = true
-                    }
-                    .padding(.horizontal, 16)
-                }
-                Color.clear.frame(height: 0)
-            }
-            .frame(maxWidth: .infinity, alignment: .bottom)
-            .padding(.bottom, 104)
 
             fab
                 .padding(.trailing, 24)
@@ -59,6 +45,11 @@ struct HomeView: View {
         }
         .sheet(isPresented: $showSettings) {
             SettingsView()
+        }
+        .alert("Bloom could not finish that action", isPresented: errorBinding) {
+            Button("OK", role: .cancel) { errorMessage = nil }
+        } message: {
+            Text(errorMessage ?? "Please try again.")
         }
         .navigationDestination(item: $pendingCaptureProject) { project in
             CameraView(project: project)
@@ -86,13 +77,6 @@ struct HomeView: View {
             // "camera in use" indicator while the user is on Home.
             try? await Task.sleep(for: .milliseconds(800))
             await CameraSession.shared.prewarm()
-        }
-        .task(priority: .utility) {
-            // Defer the CloudKit network probe past first paint so it
-            // doesn't compete with the initial render. Disabled-backup
-            // case returns immediately and is essentially free.
-            try? await Task.sleep(for: .milliseconds(1_500))
-            backup.refresh()
         }
     }
 
@@ -237,17 +221,33 @@ struct HomeView: View {
     }
 
     private func delete(_ project: Project) {
-        context.delete(project)
-        try? context.save()
+        let projectID = project.id
+        do {
+            try ProjectRepository(context: context).deleteProject(project)
+            PhotoStore.shared.deleteFiles(for: projectID)
+            Task {
+                await ReminderScheduler.shared.removeReminders(forProjectID: projectID)
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 
     private func backfillPhotoSummariesIfNeeded() {
-        let projectsNeedingBackfill = projects.filter(\.photoSummaryNeedsBackfill)
-        guard !projectsNeedingBackfill.isEmpty else { return }
-        for project in projectsNeedingBackfill {
-            project.refreshPhotoSummaryFromPhotos()
+        do {
+            try ProjectRepository(context: context).backfillPhotoSummaries(projects: projects)
+        } catch {
+            errorMessage = error.localizedDescription
         }
-        try? context.save()
+    }
+
+    private var errorBinding: Binding<Bool> {
+        Binding(
+            get: { errorMessage != nil },
+            set: { isPresented in
+                if !isPresented { errorMessage = nil }
+            }
+        )
     }
 }
 
@@ -294,4 +294,3 @@ private struct ProjectPickerSheet: View {
         }
     }
 }
-
