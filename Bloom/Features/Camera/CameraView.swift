@@ -300,22 +300,43 @@ private extension CameraSession.Status {
 //
 // The horizontal ghost-opacity slider conflicts with NavigationStack's
 // interactive pop gesture — dragging the slider triggers a swipe-back
-// and reveals the previous screen. Disabling the recognizer while this
-// view is on-screen (and restoring it on disappear) fixes the conflict.
+// and reveals the previous screen.
+//
+// Using UIViewRepresentable so the injected UIView is always part of the
+// window responder chain, which reliably leads to the UINavigationController
+// regardless of how SwiftUI nests its hosting containers.
 
-private struct NavigationSwipeBackDisabler: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> _VC { _VC() }
-    func updateUIViewController(_ uiViewController: _VC, context: Context) {}
+private struct NavigationSwipeBackDisabler: UIViewRepresentable {
+    func makeUIView(context: Context) -> _View { _View() }
+    func updateUIView(_ uiView: _View, context: Context) {}
 
-    final class _VC: UIViewController {
-        override func viewWillAppear(_ animated: Bool) {
-            super.viewWillAppear(animated)
-            navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+    final class _View: UIView {
+        private weak var cachedNav: UINavigationController?
+
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+            if window != nil {
+                // A small delay lets SwiftUI finish wiring the responder chain.
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
+                    self.cachedNav = self.findNavController()
+                    self.cachedNav?.interactivePopGestureRecognizer?.isEnabled = false
+                }
+            } else {
+                // View is leaving — restore using the cached reference before
+                // the responder chain is torn down.
+                cachedNav?.interactivePopGestureRecognizer?.isEnabled = true
+                cachedNav = nil
+            }
         }
 
-        override func viewWillDisappear(_ animated: Bool) {
-            super.viewWillDisappear(animated)
-            navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        private func findNavController() -> UINavigationController? {
+            var responder: UIResponder? = self
+            while let r = responder {
+                if let nav = r as? UINavigationController { return nav }
+                responder = r.next
+            }
+            return nil
         }
     }
 }
