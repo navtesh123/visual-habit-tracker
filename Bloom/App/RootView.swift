@@ -15,20 +15,34 @@ struct RootView: View {
     /// over the freshly-mounted Home screen.
     @Binding var openFirstProjectEditor: Bool
 
+    @State private var firstCaptureProject: Project?
     @State private var reduceTransparency: Bool = UIAccessibility.isReduceTransparencyEnabled
     @State private var reduceMotion: Bool = UIAccessibility.isReduceMotionEnabled
 
     var body: some View {
         NavigationStack {
             HomeView()
+                .navigationDestination(item: $firstCaptureProject) { project in
+                    CameraView(project: project)
+                }
         }
         .background(NeonPlayroom.midnightAbyss.ignoresSafeArea())
         .fontDesign(.rounded)
         .environment(\.reduceTransparencyEnabled, reduceTransparency)
         .environment(\.reduceMotionEnabled, reduceMotion)
         .sheet(isPresented: $openFirstProjectEditor) {
-            ProjectEditorView(mode: .create) { _ in
+            ProjectEditorView(
+                mode: .create,
+                suggestedName: "My first project",
+                submitLabel: "Start capture"
+            ) { project in
                 openFirstProjectEditor = false
+                firstCaptureProject = project
+            }
+        }
+        .onChange(of: firstCaptureProject) { _, project in
+            if project != nil {
+                CameraSession.shared.beginCapturePath()
             }
         }
         .onReceive(NotificationCenter.default.publisher(
