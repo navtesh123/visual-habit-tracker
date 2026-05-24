@@ -46,11 +46,6 @@ targets:
           - still-camera
         NSCameraUsageDescription: "Bloom Tracker uses the camera to take your progress photos. They stay on this device."
         ITSAppUsesNonExemptEncryption: false
-        UIAppFonts:
-          - BebasNeue-Regular.ttf
-          - Inter-Regular.ttf
-          - Inter-Medium.ttf
-          - Inter-SemiBold.ttf
         CFBundleURLTypes:
           - CFBundleURLSchemes:
               - bloom

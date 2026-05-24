@@ -69,15 +69,6 @@ struct HomeView: View {
             await Task.yield()
             backfillPhotoSummariesIfNeeded()
         }
-        .task(priority: .background) {
-            // Pre-warm the camera session past first paint so the very
-            // first capture-button tap (cold-launch path on a fresh
-            // install) doesn't pay AVFoundation device-discovery cost.
-            // Configures only — does not power on hardware, so no system
-            // "camera in use" indicator while the user is on Home.
-            try? await Task.sleep(for: .milliseconds(800))
-            await CameraSession.shared.prewarm()
-        }
     }
 
     @ToolbarContentBuilder

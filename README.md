@@ -30,12 +30,8 @@ See [`Bloom/`](Bloom/) for source organization:
 
 ## Fonts
 
-The display font (Bebas Neue) and body font (Inter) are referenced by file name in `Info.plist`. To enable them visually:
-
-1. Download [Bebas Neue](https://fonts.google.com/specimen/Bebas+Neue) and [Inter](https://fonts.google.com/specimen/Inter).
-2. Drop the `.ttf` files into [`Bloom/Resources/Fonts/`](Bloom/Resources/Fonts/) matching the names listed in `project.yml`'s `UIAppFonts`.
-
-Until then, system font fallbacks render automatically.
+The app currently uses SF Pro system typography through SwiftUI. Do not add
+font names to `UIAppFonts` unless the matching `.ttf` files are bundled.
 
 ## Privacy posture
 

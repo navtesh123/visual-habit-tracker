@@ -162,18 +162,6 @@ struct OnboardingView: View {
             @unknown default:
                 cameraGranted = false
             }
-
-            // If the user granted access, eagerly pre-warm the camera
-            // session in the background. They'll likely spend a few
-            // seconds finishing onboarding and creating a project before
-            // the first capture tap — plenty of head-room for AVFoundation
-            // device discovery and input/output wiring to complete off
-            // the main thread.
-            if cameraGranted == true {
-                Task.detached(priority: .background) {
-                    await CameraSession.shared.prewarm()
-                }
-            }
         }
     }
 

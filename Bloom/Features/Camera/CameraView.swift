@@ -13,8 +13,8 @@ struct CameraView: View {
     @Environment(\.modelContext) private var modelContext
 
     /// Reuse the process-wide camera session so re-entries (and the very
-    /// first capture after install) skip `configure()` entirely once it's
-    /// been paid for via `CameraSession.shared.prewarm()` on Home.
+    /// first capture after install) share one configured AVFoundation stack
+    /// instead of constructing a fresh session for every camera entry.
     @ObservedObject private var session = CameraSession.shared
     @State private var motion = MotionTracker()
     @State private var viewModel: CameraViewModel
