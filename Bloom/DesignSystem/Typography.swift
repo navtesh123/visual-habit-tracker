@@ -2,14 +2,10 @@ import SwiftUI
 
 /// Brand typography (PRD §7.4).
 ///
-/// Display headline face is a dense, bold compressed sans (Bebas Neue);
-/// body face is a precise neutral sans (Inter). Both have system fallbacks
-/// so the app still renders cleanly until the `.ttf` files are bundled.
+/// Display headline face: Bebas Neue (bundled).
+/// Body face: SF Pro Rounded — applied app-wide via `.fontDesign(.rounded)` in RootView.
 enum AppFont {
     private static let displayFamily = "BebasNeue-Regular"
-    private static let bodyRegular = "Inter-Regular"
-    private static let bodyMedium = "Inter-Medium"
-    private static let bodySemibold = "Inter-SemiBold"
 
     /// Display / headline. Negative kerning is applied at the modifier site for compactness.
     static func display(_ size: CGFloat) -> Font {
@@ -20,16 +16,7 @@ enum AppFont {
     }
 
     static func body(_ size: CGFloat, weight: Weight = .regular) -> Font {
-        let name: String
-        switch weight {
-        case .regular: name = bodyRegular
-        case .medium: name = bodyMedium
-        case .semibold: name = bodySemibold
-        }
-        if UIFont(name: name, size: size) != nil {
-            return .custom(name, size: size)
-        }
-        return .system(size: size, weight: weight.systemWeight)
+        .system(size: size, weight: weight.systemWeight)
     }
 
     enum Weight {
