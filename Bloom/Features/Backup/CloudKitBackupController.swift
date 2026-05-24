@@ -81,6 +81,9 @@ final class CloudKitBackupController {
             status = .disabled
             return
         }
+        // Write status immediately so any view observing backup.status
+        // gets a re-render right away rather than waiting for the async probe.
+        status = .syncing
         scheduleProbe()
     }
 

@@ -9,7 +9,7 @@ struct RootView: View {
 
     @State private var reduceTransparency: Bool = UIAccessibility.isReduceTransparencyEnabled
     @State private var reduceMotion: Bool = UIAccessibility.isReduceMotionEnabled
-    @State private var hasCompletedOnboarding: Bool = AppSettings.hasCompletedOnboarding
+    @AppStorage(AppSettings.Key.hasCompletedOnboarding) private var hasCompletedOnboarding: Bool = false
     @State private var creatingFirstProject: Bool = false
 
     var body: some View {
@@ -27,6 +27,7 @@ struct RootView: View {
                 .zIndex(2)
             }
         }
+        .background(NeonPlayroom.midnightAbyss.ignoresSafeArea())
         .fontDesign(.rounded)
         .environment(\.reduceTransparencyEnabled, reduceTransparency)
         .environment(\.reduceMotionEnabled, reduceMotion)

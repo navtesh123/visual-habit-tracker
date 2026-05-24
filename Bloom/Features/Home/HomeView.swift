@@ -41,6 +41,7 @@ struct HomeView: View {
         }
         .background(NeonPlayroom.midnightAbyss.ignoresSafeArea())
         .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar { toolbarContent }
         .sheet(isPresented: $creatingNew) {
             ProjectEditorView(mode: .create) { newProject in
@@ -70,20 +71,21 @@ struct HomeView: View {
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
-            Text("Bloom Tracker")
-                .displayStyle(34)
-                .foregroundStyle(NeonPlayroom.ghostWhite)
-        }
-        ToolbarItem(placement: .topBarTrailing) {
             Button {
                 showSettings = true
             } label: {
                 Image(systemName: "gearshape")
                     .font(.headline)
+                    .foregroundStyle(Color(uiColor: .systemGray))
                     .frame(width: 36, height: 36)
             }
             .buttonStyle(.glass)
             .accessibilityLabel("Settings")
+        }
+        ToolbarItem(placement: .principal) {
+            Text("Bloom")
+                .displayStyle(20)
+                .foregroundStyle(NeonPlayroom.ghostWhite)
         }
         ToolbarItem(placement: .topBarTrailing) {
             Button {
