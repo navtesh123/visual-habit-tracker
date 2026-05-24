@@ -8,10 +8,6 @@ struct ProjectDetailView: View {
 
     @State private var viewerPhoto: Photo?
     @State private var showCamera: Bool = false
-    @State private var showCompare: Bool = false
-    @State private var showTimelapse: Bool = false
-    @State private var showProgressToast: Bool = false
-    @State private var lastSeenPhotoCount: Int = 0
     @State private var errorMessage: String?
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 3)
@@ -30,12 +26,6 @@ struct ProjectDetailView: View {
             actionBar
                 .padding(.horizontal, 20)
                 .padding(.bottom, 24)
-
-            if showProgressToast {
-                progressToast
-                    .padding(.bottom, 110)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-            }
         }
         .background(NeonPlayroom.midnightAbyss.ignoresSafeArea())
         .navigationTitle("")
@@ -46,45 +36,16 @@ struct ProjectDetailView: View {
                     .displayStyle(22)
                     .foregroundStyle(NeonPlayroom.ghostWhite)
             }
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    Button {
-                        showCompare = true
-                    } label: {
-                        Label("Compare", systemImage: "rectangle.split.2x1")
-                    }
-                    .disabled(project.photos.count < 2)
-
-                    Button {
-                        showTimelapse = true
-                    } label: {
-                        Label("Timelapse", systemImage: "play.rectangle")
-                    }
-                    .disabled(project.photos.count < 2)
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(NeonPlayroom.ghostWhite)
-                        .frame(width: 36, height: 36)
-                        .background(Color.black.opacity(0.75), in: Circle())
-                }
-            }
         }
         .navigationDestination(isPresented: $showCamera) {
             CameraView(project: project)
         }
         .onChange(of: showCamera) { _, isPresented in
-            // Eagerly start the capture pipeline so `startRunning()` overlaps
-            // with the navigation push transition.
+            // Delay prewarm until the push gesture has cleared; CameraView
+            // owns `startRunning()` once it is visible.
             if isPresented {
                 CameraSession.shared.beginCapturePath()
             }
-        }
-        .navigationDestination(isPresented: $showCompare) {
-            CompareView(project: project)
-        }
-        .navigationDestination(isPresented: $showTimelapse) {
-            TimelapsePlayerView(project: project)
         }
         .fullScreenCover(item: $viewerPhoto) { photo in
             PhotoViewerView(
@@ -98,23 +59,6 @@ struct ProjectDetailView: View {
             Button("OK", role: .cancel) { errorMessage = nil }
         } message: {
             Text(errorMessage ?? "Please try again.")
-        }
-        .onAppear {
-            lastSeenPhotoCount = project.photos.count
-        }
-        .onChange(of: project.photos.count) { _, newCount in
-            // PRD §3.4 — surface the compare payoff as soon as a second
-            // photo exists, the moment we return from the camera.
-            if newCount > lastSeenPhotoCount && newCount >= 2 {
-                withAnimation(.spring(duration: 0.35)) {
-                    showProgressToast = true
-                }
-                Task {
-                    try? await Task.sleep(for: .seconds(4))
-                    withAnimation { showProgressToast = false }
-                }
-            }
-            lastSeenPhotoCount = newCount
         }
     }
 
@@ -232,7 +176,7 @@ struct ProjectDetailView: View {
             Text("No photos yet")
                 .displayStyle(28)
                 .foregroundStyle(NeonPlayroom.ghostWhite)
-            Text("Take your first shot. The next one will line up with this one using a ghost overlay.")
+            Text("Take your first shot to start this project timeline.")
                 .bodyStyle(14)
                 .foregroundStyle(NeonPlayroom.ghostWhite.opacity(0.7))
                 .multilineTextAlignment(.center)
@@ -265,36 +209,6 @@ struct ProjectDetailView: View {
                 Spacer()
             }
         }
-    }
-
-    // MARK: - Toast
-
-    private var progressToast: some View {
-        Button {
-            withAnimation { showProgressToast = false }
-            showCompare = true
-        } label: {
-            HStack(spacing: 12) {
-                Image(systemName: "sparkles")
-                    .foregroundStyle(NeonPlayroom.limeSqueeze)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("See your progress")
-                        .bodyStyle(14, weight: .semibold)
-                        .foregroundStyle(NeonPlayroom.ghostWhite)
-                    Text("Compare your first and latest shot")
-                        .bodyStyle(12)
-                        .foregroundStyle(NeonPlayroom.ghostWhite.opacity(0.65))
-                }
-                Spacer()
-                Image(systemName: "arrow.right")
-                    .foregroundStyle(NeonPlayroom.ghostWhite.opacity(0.7))
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 14)
-        }
-        .buttonStyle(.plain)
-        .glassControl()
-        .padding(.horizontal, 20)
     }
 
     // MARK: - Actions

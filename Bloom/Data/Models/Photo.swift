@@ -20,27 +20,13 @@ final class Photo {
     var capturedAt: Date
     var note: String?
 
-    // CoreMotion attitude at capture time, recorded so the next session
-    // can guide the user back to the same pose (PRD §3.3).
-    var pitch: Double?
-    var roll: Double?
-    var yaw: Double?
-
-    /// Zoom factor active at capture (e.g. `1.0`, `2.0`). Persisted so the
-    /// camera can restore framing distance on the next session.
-    var zoom: Double?
-
     init(
         id: UUID = UUID(),
         project: Project? = nil,
         fileRef: String,
         thumbRef: String,
         capturedAt: Date = .now,
-        note: String? = nil,
-        pitch: Double? = nil,
-        roll: Double? = nil,
-        yaw: Double? = nil,
-        zoom: Double? = nil
+        note: String? = nil
     ) {
         self.id = id
         self.project = project
@@ -48,9 +34,5 @@ final class Photo {
         self.thumbRef = thumbRef
         self.capturedAt = capturedAt
         self.note = note
-        self.pitch = pitch
-        self.roll = roll
-        self.yaw = yaw
-        self.zoom = zoom
     }
 }

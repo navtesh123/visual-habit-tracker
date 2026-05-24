@@ -7,14 +7,12 @@ private let localLaunchLogger = Logger(subsystem: "app.bloomtracker.Bloom", cate
 @main
 struct BloomApp: App {
     /// Cold-start container is built off the main actor in a Task so the
-    /// SwiftUI window can present immediately and the iOS launch screen
-    /// drops as soon as possible.
+    /// SwiftUI window can present immediately.
     ///
-    /// On a fresh install the user lands in `OnboardingView` first — and
-    /// onboarding doesn't need the SwiftData store. We render it
-    /// immediately, in parallel with the bootstrap task, so the user sees
-    /// motion within ~one frame and never waits on SQLite store creation
-    /// + schema setup before seeing UI.
+    /// On a fresh install the user lands in `OnboardingView`, which does not
+    /// need SwiftData. We delay the bootstrap for a moment in that path so first
+    /// paint is not competing with SQLite/schema setup. Returning launches
+    /// still bootstrap immediately because Home needs the store.
     @State private var container: ModelContainer?
     @State private var launchStarted: ContinuousClock.Instant = .now
     @AppStorage(AppSettings.Key.hasCompletedOnboarding) private var hasCompletedOnboarding: Bool = false
@@ -67,10 +65,17 @@ struct BloomApp: App {
 
     private func bootstrapIfNeeded() async {
         guard container == nil else { return }
+        let shouldFavorFirstPaint = !hasCompletedOnboarding
+        if shouldFavorFirstPaint {
+            await Task.yield()
+            try? await Task.sleep(for: .milliseconds(150))
+        }
+
         let started = launchStarted
-        let resolved = await Task.detached(priority: .userInitiated) {
+        let priority: TaskPriority = shouldFavorFirstPaint ? .utility : .userInitiated
+        let resolved = await Task.detached(priority: priority) {
             do {
-                return try ModelContainer(for: Project.self, Photo.self, ReferenceShot.self)
+                return try ModelContainer(for: Project.self, Photo.self)
             } catch {
                 fatalError("Failed to initialize local SwiftData container: \(error)")
             }

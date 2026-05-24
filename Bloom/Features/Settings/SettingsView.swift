@@ -1,5 +1,5 @@
-// PRD §3.8 — Settings. Local-first v1 exposes privacy, reminders, export,
-// and about in one calm surface.
+// PRD §3.8 — Settings. Local-first v1 exposes privacy, reminders, and about
+// in one calm surface.
 //
 // Layering rule (PRD §7.1): the screen lives inside a system Form, which
 // adopts iOS 26 Liquid Glass automatically. Content within rows stays in
@@ -15,7 +15,6 @@ struct SettingsView: View {
     @Query(sort: \Project.createdAt, order: .reverse) private var projects: [Project]
 
     @Bindable private var reminders = ReminderScheduler.shared
-    @State private var exportCoordinator = ExportCoordinator()
 
     @State private var globalReminderTime: Date = SettingsView.componentsToDate(AppSettings.globalReminderTime)
 
@@ -24,7 +23,6 @@ struct SettingsView: View {
             Form {
                 privacySection
                 remindersSection
-                exportSection
                 aboutSection
             }
             .scrollContentBackground(.hidden)
@@ -36,15 +34,6 @@ struct SettingsView: View {
                     Button("Done") { dismiss() }
                         .bold()
                 }
-            }
-            .sheet(item: $exportCoordinator.pendingShare) { artifact in
-                ExportShareSheet(url: artifact.url)
-                    .presentationDetents([.medium, .large])
-            }
-            .alert("Export failed", isPresented: exportErrorBinding) {
-                Button("OK", role: .cancel) { exportCoordinator.lastError = nil }
-            } message: {
-                Text(exportCoordinator.lastError ?? "Please try again.")
             }
             .task {
                 await reminders.refreshAuthorizationState()
@@ -70,7 +59,7 @@ struct SettingsView: View {
         } header: {
             Text("Privacy")
         } footer: {
-            Text("iCloud backup is not part of this v1 local build. You can export all projects any time.")
+            Text("iCloud backup is not part of this local build.")
                 .bodyStyle(12)
         }
     }
@@ -121,24 +110,6 @@ struct SettingsView: View {
         }
     }
 
-    // MARK: - Export
-
-    private var exportSection: some View {
-        Section {
-            Button {
-                Task { await exportCoordinator.runAllProjects(projects) }
-            } label: {
-                Label("Export all projects (.zip)", systemImage: "archivebox")
-            }
-            .disabled(projects.isEmpty)
-        } header: {
-            Text("Export")
-        } footer: {
-            Text("Export a zip of all your project originals any time.")
-                .bodyStyle(12)
-        }
-    }
-
     // MARK: - About
 
     private var aboutSection: some View {
@@ -152,7 +123,7 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text("Your photos stay on this device.")
                     .bodyStyle(14, weight: .semibold)
-                Text("Locations are stripped before save. Notifications are optional. You can export everything any time.")
+                Text("Locations are stripped before save. Notifications are optional.")
                     .bodyStyle(12)
                     .foregroundStyle(NeonPlayroom.ghostWhite.opacity(0.65))
             }
@@ -195,14 +166,6 @@ struct SettingsView: View {
         ) ?? .now
     }
 
-    private var exportErrorBinding: Binding<Bool> {
-        Binding(
-            get: { exportCoordinator.lastError != nil },
-            set: { isPresented in
-                if !isPresented { exportCoordinator.lastError = nil }
-            }
-        )
-    }
 }
 
 // MARK: - Per-project reminders sub-screen

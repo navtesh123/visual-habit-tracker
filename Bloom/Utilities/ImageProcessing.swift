@@ -18,7 +18,8 @@ enum ImageProcessing {
 
     /// Encode a UIImage as HEIC with GPS/EXIF stripped (PRD §5.3).
     static func encodeStrippedHEIC(_ image: UIImage, quality: CGFloat = 0.92) throws -> Data {
-        guard let cgImage = image.cgImage else { throw Error.cgImageUnavailable }
+        guard let sourceImage = image.cgImage else { throw Error.cgImageUnavailable }
+        let cgImage = try makeOpaqueRGBImage(from: sourceImage)
 
         let data = NSMutableData()
         let utType = UTType.heic.identifier as CFString
@@ -37,6 +38,37 @@ enum ImageProcessing {
         CGImageDestinationAddImage(destination, cgImage, properties as CFDictionary)
         guard CGImageDestinationFinalize(destination) else { throw Error.encodingFailed }
         return data as Data
+    }
+
+    /// Camera captures and generated thumbnails are visually opaque. Some
+    /// UIKit/ImageIO paths still hand us `AlphaPremulLast` buffers, which
+    /// makes ImageIO warn and write an unnecessarily alpha-capable image.
+    private static func makeOpaqueRGBImage(from cgImage: CGImage) throws -> CGImage {
+        let colorSpace = CGColorSpace(name: CGColorSpace.sRGB) ?? CGColorSpaceCreateDeviceRGB()
+        let bitmapInfo = CGBitmapInfo.byteOrder32Big.union(
+            CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue)
+        )
+
+        guard let context = CGContext(
+            data: nil,
+            width: cgImage.width,
+            height: cgImage.height,
+            bitsPerComponent: 8,
+            bytesPerRow: cgImage.width * 4,
+            space: colorSpace,
+            bitmapInfo: bitmapInfo.rawValue
+        ) else {
+            throw Error.encodingFailed
+        }
+
+        context.interpolationQuality = .high
+        context.draw(
+            cgImage,
+            in: CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height)
+        )
+
+        guard let opaqueImage = context.makeImage() else { throw Error.encodingFailed }
+        return opaqueImage
     }
 
     /// Generate a thumbnail UIImage at approximately `maxPixelDimension` on the long edge.

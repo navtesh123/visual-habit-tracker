@@ -3,8 +3,8 @@ import SwiftData
 
 /// A tracked subject and its capture schedule (PRD §4.2).
 ///
-/// The stable `id: UUID` is the primary key for any future CloudKit / account
-/// migration (PRD §4.4). Never key persistence on insertion order or file name.
+/// The stable `id: UUID` keeps projects independent from insertion order or
+/// file names.
 @Model
 final class Project {
     @Attribute(.unique) var id: UUID
@@ -27,9 +27,6 @@ final class Project {
 
     @Relationship(deleteRule: .cascade, inverse: \Photo.project)
     var photos: [Photo] = []
-
-    @Relationship(deleteRule: .cascade, inverse: \ReferenceShot.project)
-    var referenceShot: ReferenceShot?
 
     init(
         id: UUID = UUID(),
@@ -127,17 +124,6 @@ final class Project {
 
     var firstPhoto: Photo? {
         photos.min(by: { $0.capturedAt < $1.capturedAt })
-    }
-
-    /// The photo whose framing should be used as the camera ghost overlay.
-    /// Falls back to the most recent capture if no explicit reference is set
-    /// (PRD §3.3, §4.2 ReferenceShot entity).
-    var overlayReferencePhoto: Photo? {
-        if let referenceID = referenceShot?.photoID,
-           let match = photos.first(where: { $0.id == referenceID }) {
-            return match
-        }
-        return latestPhoto
     }
 
     /// Whole days since the most recent capture, or `nil` if no captures yet.

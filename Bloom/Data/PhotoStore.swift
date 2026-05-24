@@ -3,12 +3,7 @@ import UIKit
 import SwiftData
 
 /// Metadata recorded by the camera at capture time.
-/// Persisted onto `Photo` for the next session's framing guidance (PRD §3.3).
 struct CaptureMeta: Sendable {
-    var pitch: Double?
-    var roll: Double?
-    var yaw: Double?
-    var zoom: Double?
     var capturedAt: Date = .now
     var note: String?
 }

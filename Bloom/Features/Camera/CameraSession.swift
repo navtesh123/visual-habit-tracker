@@ -9,7 +9,7 @@ import Foundation
 /// 1. `requestAuthorization()` — call from the SwiftUI `.task`.
 /// 2. `configure()` — sets up inputs/outputs (idempotent).
 /// 3. `start()` / `stop()` — bracket the camera view's lifetime.
-/// 4. `capture(zoom:)` — `async` photo capture; returns a fully-decoded UIImage.
+/// 4. `capture()` — `async` photo capture; returns a fully-decoded UIImage.
 @MainActor
 final class CameraSession: NSObject, ObservableObject {
     /// Process-wide singleton. Reusing one `AVCaptureSession` across capture
@@ -30,27 +30,55 @@ final class CameraSession: NSObject, ObservableObject {
 
     enum CaptureError: Error {
         case sessionNotReady
+        case cameraUnavailable
+        case noBackCamera
         case noPhotoData
         case noImage
         case underlying(Error)
     }
 
+    private enum ConfigurationResult {
+        case success(AVCaptureDeviceInput)
+        case failure(Error)
+    }
+
     @Published private(set) var status: Status = .idle
-    @Published private(set) var currentZoom: CGFloat = 1.0
-    @Published private(set) var minZoom: CGFloat = 1.0
-    @Published private(set) var maxZoom: CGFloat = 5.0
+    @Published private(set) var isRunning: Bool = false
 
     let session = AVCaptureSession()
 
     private let sessionQueue = DispatchQueue(label: "app.progress.camera.session")
     private let photoOutput = AVCapturePhotoOutput()
     private var videoInput: AVCaptureDeviceInput?
-    private var currentDevice: AVCaptureDevice?
     private var captureContinuation: CheckedContinuation<UIImage, Error>?
     private var isConfigured: Bool = false
+    private var desiredRunning: Bool = false
+    private var runtimeErrorObserver: NSObjectProtocol?
+    private var startRetryTask: Task<Void, Never>?
     /// Coalesces concurrent `configure()` callers (pre-start path + the
     /// CameraView .task can both arrive at once on a fresh launch).
     private var configurationTask: Task<Void, Never>?
+
+    override init() {
+        super.init()
+        runtimeErrorObserver = NotificationCenter.default.addObserver(
+            forName: AVCaptureSession.runtimeErrorNotification,
+            object: session,
+            queue: nil
+        ) { [weak self] notification in
+            let error = notification.userInfo?[AVCaptureSessionErrorKey] as? NSError
+            Task { @MainActor [weak self] in
+                self?.handleRuntimeError(error)
+            }
+        }
+    }
+
+    deinit {
+        if let runtimeErrorObserver {
+            NotificationCenter.default.removeObserver(runtimeErrorObserver)
+        }
+        startRetryTask?.cancel()
+    }
 
     // MARK: - Authorization
 
@@ -90,34 +118,17 @@ final class CameraSession: NSObject, ObservableObject {
         await configure()
     }
 
-    /// Eagerly start the full capture pipeline (configure + powerOn) at the
-    /// moment the user *commits* to opening the camera (FAB tap, "Capture
-    /// now" context menu, retake button). The navigation push transition
-    /// then overlaps with `startRunning()` so the preview is already
-    /// streaming frames by the time `CameraView` is visible.
+    /// Prepares the capture pipeline after the navigation transition has had
+    /// time to complete. Starting `AVCaptureSession` during a push can block
+    /// UIKit's system gesture gate, so this method only performs idempotent
+    /// configuration and leaves `startRunning()` to `CameraView`.
     ///
     /// Safe to call from anywhere; race-free with `CameraView`'s own
-    /// `.task` because `configure()` is deduped and `start()` short-circuits
-    /// when the underlying `AVCaptureSession` is already running.
+    /// `.task` because `configure()` is deduped.
     func beginCapturePath() {
-        Task { [weak self] in
-            guard let self else { return }
-            switch AVCaptureDevice.authorizationStatus(for: .video) {
-            case .authorized:
-                if !self.isConfigured {
-                    await self.configure()
-                }
-                guard case .ready = self.status else { return }
-                self.start()
-            case .notDetermined:
-                // Defer to CameraView's .task — it requests permission
-                // in the proper UI context.
-                return
-            case .denied, .restricted:
-                self.status = .denied
-            @unknown default:
-                self.status = .denied
-            }
+        Task(priority: .utility) { [weak self] in
+            try? await Task.sleep(for: .milliseconds(350))
+            await self?.prewarm()
         }
     }
 
@@ -143,23 +154,37 @@ final class CameraSession: NSObject, ObservableObject {
 
         let session = self.session
         let photoOutput = self.photoOutput
-        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-            sessionQueue.async { [weak self] in
-                self?.configureOnQueue(session: session, photoOutput: photoOutput)
-                continuation.resume()
+        for attempt in 0..<Self.configurationAttemptCount {
+            let result = await withCheckedContinuation { (continuation: CheckedContinuation<ConfigurationResult, Never>) in
+                sessionQueue.async { [weak self] in
+                    guard let self else {
+                        continuation.resume(returning: .failure(CaptureError.sessionNotReady))
+                        return
+                    }
+                    continuation.resume(returning: self.configureOnQueue(session: session, photoOutput: photoOutput))
+                }
             }
-        }
 
-        if case .configuring = status {
-            isConfigured = true
-            status = .ready
+            switch result {
+            case .success(let input):
+                videoInput = input
+                isConfigured = true
+                status = .ready
+                return
+            case .failure(let error) where Self.shouldRetryConfiguration(error, attempt: attempt):
+                let delay = Self.configurationRetryDelay(for: attempt)
+                try? await Task.sleep(for: .milliseconds(delay))
+            case .failure(let error):
+                status = .failed(error)
+                return
+            }
         }
     }
 
     nonisolated private func configureOnQueue(
         session: AVCaptureSession,
         photoOutput: AVCapturePhotoOutput
-    ) {
+    ) -> ConfigurationResult {
         session.beginConfiguration()
         session.sessionPreset = .photo
 
@@ -168,87 +193,141 @@ final class CameraSession: NSObject, ObservableObject {
             for: .video,
             position: .back
         ) else {
-            DispatchQueue.main.async {
-                self.status = .failed(NSError(
-                    domain: "CameraSession",
-                    code: -1,
-                    userInfo: [NSLocalizedDescriptionKey: "No back camera available"]
-                ))
-            }
             session.commitConfiguration()
-            return
+            return .failure(CaptureError.noBackCamera)
         }
 
+        let input: AVCaptureDeviceInput
         do {
-            let input = try AVCaptureDeviceInput(device: device)
+            input = try AVCaptureDeviceInput(device: device)
             guard session.canAddInput(input) else { throw CaptureError.sessionNotReady }
             session.addInput(input)
-            Task { @MainActor [weak self] in
-                self?.videoInput = input
-                self?.currentDevice = device
-            }
         } catch {
-            DispatchQueue.main.async { self.status = .failed(error) }
             session.commitConfiguration()
-            return
+            return .failure(error)
         }
 
         guard session.canAddOutput(photoOutput) else {
-            DispatchQueue.main.async {
-                self.status = .failed(CaptureError.sessionNotReady)
-            }
+            session.removeInput(input)
             session.commitConfiguration()
-            return
+            return .failure(CaptureError.sessionNotReady)
         }
         session.addOutput(photoOutput)
         photoOutput.maxPhotoQualityPrioritization = .quality
 
         session.commitConfiguration()
-
-        let resolvedMin = max(1.0, device.minAvailableVideoZoomFactor)
-        let resolvedMax = min(5.0, device.maxAvailableVideoZoomFactor)
-        let resolvedCurrent = device.videoZoomFactor
-        DispatchQueue.main.async {
-            self.minZoom = resolvedMin
-            self.maxZoom = resolvedMax
-            self.currentZoom = resolvedCurrent
-        }
+        return .success(input)
     }
 
     // MARK: - Start / stop
 
     func start() {
+        desiredRunning = true
         guard case .ready = status else { return }
+        guard UIApplication.shared.applicationState == .active else {
+            stop()
+            return
+        }
+        guard let device = videoInput?.device else {
+            status = .failed(CaptureError.cameraUnavailable)
+            return
+        }
+        startOnQueue(device: device, attempt: 0)
+    }
+
+    private func startOnQueue(device: AVCaptureDevice, attempt: Int) {
         let session = self.session
         sessionQueue.async {
+            guard Self.cameraHardwareIsReady(device) else {
+                Task { @MainActor [weak self] in
+                    self?.scheduleStartRetry(device: device, after: attempt)
+                }
+                return
+            }
             if !session.isRunning {
                 session.startRunning()
+            }
+            let started = session.isRunning
+            Task { @MainActor [weak self] in
+                self?.isRunning = started
+                if !started {
+                    self?.scheduleStartRetry(device: device, after: attempt)
+                }
             }
         }
     }
 
     func stop() {
+        desiredRunning = false
+        startRetryTask?.cancel()
+        startRetryTask = nil
         let session = self.session
         sessionQueue.async {
             if session.isRunning {
                 session.stopRunning()
             }
+            Task { @MainActor [weak self] in
+                self?.isRunning = false
+            }
         }
     }
 
-    // MARK: - Zoom
+    private func scheduleStartRetry(device: AVCaptureDevice, after attempt: Int) {
+        guard desiredRunning else { return }
+        guard attempt < 4 else {
+            isRunning = false
+            status = .failed(CaptureError.cameraUnavailable)
+            return
+        }
 
-    func applyZoom(_ factor: CGFloat) {
-        guard let device = currentDevice else { return }
-        let clamped = max(minZoom, min(maxZoom, factor))
-        sessionQueue.async { [weak self] in
-            do {
-                try device.lockForConfiguration()
-                device.videoZoomFactor = clamped
-                device.unlockForConfiguration()
-                DispatchQueue.main.async { self?.currentZoom = clamped }
-            } catch {
-                // Best-effort; failing to lock zoom is non-fatal.
+        startRetryTask?.cancel()
+        startRetryTask = Task { [weak self] in
+            let delay = UInt64(150_000_000 * UInt64(attempt + 1))
+            try? await Task.sleep(nanoseconds: delay)
+            await MainActor.run {
+                guard let self, self.desiredRunning else { return }
+                self.startOnQueue(device: device, attempt: attempt + 1)
+            }
+        }
+    }
+
+    nonisolated private static func cameraHardwareIsReady(_ device: AVCaptureDevice) -> Bool {
+        do {
+            try device.lockForConfiguration()
+            device.unlockForConfiguration()
+            return true
+        } catch {
+            return false
+        }
+    }
+
+    nonisolated private static let configurationAttemptCount = 4
+
+    nonisolated private static func shouldRetryConfiguration(_ error: Error, attempt: Int) -> Bool {
+        guard attempt < configurationAttemptCount - 1 else { return false }
+        if let captureError = error as? CaptureError,
+           case .noBackCamera = captureError {
+            return false
+        }
+        return true
+    }
+
+    nonisolated private static func configurationRetryDelay(for attempt: Int) -> Int {
+        [120, 250, 500][min(attempt, 2)]
+    }
+
+    private func handleRuntimeError(_ error: NSError?) {
+        if error?.domain == AVFoundationErrorDomain,
+           error?.code == AVError.Code.mediaServicesWereReset.rawValue,
+           desiredRunning {
+            status = .ready
+            start()
+        } else {
+            desiredRunning = false
+            if let error {
+                status = .failed(error)
+            } else {
+                status = .failed(CaptureError.sessionNotReady)
             }
         }
     }
@@ -257,6 +336,14 @@ final class CameraSession: NSObject, ObservableObject {
 
     func capture() async throws -> UIImage {
         guard case .ready = status else { throw CaptureError.sessionNotReady }
+        let session = self.session
+        let running = await withCheckedContinuation { (continuation: CheckedContinuation<Bool, Never>) in
+            sessionQueue.async {
+                continuation.resume(returning: session.isRunning)
+            }
+        }
+        guard running else { throw CaptureError.cameraUnavailable }
+        guard captureContinuation == nil else { throw CaptureError.sessionNotReady }
 
         let settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
         settings.photoQualityPrioritization = .quality
@@ -269,6 +356,25 @@ final class CameraSession: NSObject, ObservableObject {
                 guard let self else { return }
                 photoOutput.capturePhoto(with: settings, delegate: self)
             }
+        }
+    }
+}
+
+extension CameraSession.CaptureError: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .sessionNotReady:
+            "Camera session is not ready yet."
+        case .cameraUnavailable:
+            "Camera hardware is not available yet. Close the camera and try again."
+        case .noBackCamera:
+            "No back camera is available on this device."
+        case .noPhotoData:
+            "Captured photo data was empty."
+        case .noImage:
+            "Captured photo could not be decoded."
+        case .underlying(let error):
+            error.localizedDescription
         }
     }
 }

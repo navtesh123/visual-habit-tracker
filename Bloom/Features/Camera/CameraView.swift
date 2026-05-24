@@ -10,33 +10,23 @@ struct CameraView: View {
     let project: Project
 
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
+    @Environment(\.scenePhase) private var scenePhase
 
     /// Reuse the process-wide camera session so re-entries (and the very
     /// first capture after install) share one configured AVFoundation stack
     /// instead of constructing a fresh session for every camera entry.
     @ObservedObject private var session = CameraSession.shared
-    @State private var motion = MotionTracker()
-    @State private var viewModel: CameraViewModel
-    @State private var didPresentReview: Bool = false
-    private let referencePhoto: Photo?
-
-    init(project: Project) {
-        self.project = project
-        self.referencePhoto = project.overlayReferencePhoto
-        _viewModel = State(initialValue: CameraViewModel(
-            referencePhoto: project.overlayReferencePhoto
-        ))
-    }
+    @State private var viewModel = CameraViewModel()
+    @State private var shouldRunSession = false
 
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
 
-            CameraPreview(session: session.session)
-                .ignoresSafeArea()
-
-            GhostOverlayView(referencePhoto: referencePhoto)
+            if session.status.supportsPreview {
+                CameraPreview(session: session.session)
+                    .ignoresSafeArea()
+            }
 
             RuleOfThirdsGrid()
                 .ignoresSafeArea()
@@ -76,13 +66,24 @@ struct CameraView: View {
             }
             await session.configure()
             guard case .ready = session.status else { return }
-            session.start()
-            motion.start()
-            viewModel.applyLockedZoom(to: session)
+            try? await Task.sleep(for: .milliseconds(350))
+            guard !Task.isCancelled else { return }
+            shouldRunSession = true
+            if scenePhase == .active {
+                session.start()
+            }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            guard shouldRunSession else { return }
+            if phase == .active {
+                session.start()
+            } else {
+                session.stop()
+            }
         }
         .onDisappear {
+            shouldRunSession = false
             session.stop()
-            motion.stop()
         }
         .fullScreenCover(item: capturedBinding) { wrapped in
             ReviewSaveView(
@@ -127,15 +128,6 @@ struct CameraView: View {
                 Text(project.name)
                     .bodyStyle(15, weight: .semibold)
                     .foregroundStyle(NeonPlayroom.ghostWhite)
-                if let zoom = viewModel.lockedZoom {
-                    Text(String(format: "Zoom %.1f×", zoom))
-                        .bodyStyle(11, weight: .medium)
-                        .foregroundStyle(NeonPlayroom.ghostWhite.opacity(0.7))
-                } else if referencePhoto != nil {
-                    Text("Reference overlay")
-                        .bodyStyle(11, weight: .medium)
-                        .foregroundStyle(NeonPlayroom.ghostWhite.opacity(0.7))
-                }
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 8)
@@ -180,7 +172,7 @@ struct CameraView: View {
     private var shutterButton: some View {
         Button {
             Task {
-                await viewModel.shutterTapped(session: session, motion: motion)
+                await viewModel.shutterTapped(session: session)
             }
         } label: {
             ZStack {
@@ -194,7 +186,7 @@ struct CameraView: View {
             .padding(6)
         }
         .buttonStyle(GlassButtonStyle())
-        .disabled(viewModel.isCapturing || session.status.isNotReady)
+        .disabled(viewModel.isCapturing || session.status.isNotReady || !session.isRunning)
         .accessibilityLabel("Capture photo")
     }
 
@@ -307,5 +299,35 @@ private extension CameraSession.Status {
     var isNotReady: Bool {
         if case .ready = self { return false }
         return true
+    }
+
+    var supportsPreview: Bool {
+        if case .ready = self { return true }
+        return false
+    }
+}
+
+/// Rule-of-thirds grid drawn over the live preview to help centering.
+private struct RuleOfThirdsGrid: View {
+    var lineColor: Color = NeonPlayroom.ghostWhite.opacity(0.35)
+    var lineWidth: CGFloat = 0.5
+
+    var body: some View {
+        GeometryReader { proxy in
+            let w = proxy.size.width
+            let h = proxy.size.height
+            Path { path in
+                path.move(to: CGPoint(x: w / 3, y: 0))
+                path.addLine(to: CGPoint(x: w / 3, y: h))
+                path.move(to: CGPoint(x: 2 * w / 3, y: 0))
+                path.addLine(to: CGPoint(x: 2 * w / 3, y: h))
+                path.move(to: CGPoint(x: 0, y: h / 3))
+                path.addLine(to: CGPoint(x: w, y: h / 3))
+                path.move(to: CGPoint(x: 0, y: 2 * h / 3))
+                path.addLine(to: CGPoint(x: w, y: 2 * h / 3))
+            }
+            .stroke(lineColor, lineWidth: lineWidth)
+        }
+        .allowsHitTesting(false)
     }
 }

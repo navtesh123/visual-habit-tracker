@@ -2,10 +2,7 @@ import XCTest
 import SwiftData
 @testable import Bloom
 
-/// Smoke tests for the M0–M5 data layer plus the pure-Swift surface of
-/// the deferred milestones (M6–M13). Anything that requires device services
-/// (camera, UserNotifications, AVAssetWriter, Vision)
-/// is exercised at unit-test level via its pure-math seams only.
+/// Smoke tests for the local data layer and pure helpers.
 final class BloomTests: XCTestCase {
 
     // MARK: - Existing M0–M5 smoke tests
@@ -64,32 +61,6 @@ final class BloomTests: XCTestCase {
     func testCumulativeThisMonthIsZeroWithNoPhotos() {
         let project = Project(name: "Plant")
         XCTAssertEqual(project.cumulativeThisMonth, 0)
-    }
-
-    // MARK: - M10 ProjectExporter helpers
-
-    func testProjectExporterSafeNameSlugifies() {
-        XCTAssertEqual(ProjectExporter.safeName("Left Bicep"), "Left-Bicep")
-        XCTAssertEqual(ProjectExporter.safeName("  Spaces  "), "Spaces")
-        XCTAssertEqual(ProjectExporter.safeName("Punc!@#tuation"), "Punc-tuation")
-        XCTAssertEqual(ProjectExporter.safeName(""), "Project")
-        XCTAssertEqual(ProjectExporter.safeName("!!!"), "Project")
-    }
-
-    func testProjectExporterScratchURLLandsInTemporary() {
-        let url = ProjectExporter.scratchURL(suggestedName: "demo.png")
-        XCTAssertEqual(url.lastPathComponent, "demo.png")
-        XCTAssertTrue(
-            url.path.hasPrefix(FileManager.default.temporaryDirectory.path),
-            "exports should always live in the temporary directory"
-        )
-    }
-
-    func testProjectExporterTimestampIsStableISODay() {
-        let date = Date(timeIntervalSince1970: 1_700_000_000) // 2023-11-14 UTC
-        let stamp = ProjectExporter.formattedFilenameTimestamp(date)
-        XCTAssertEqual(stamp.count, "2023-11-14".count)
-        XCTAssertTrue(stamp.contains("-"))
     }
 
     // MARK: - Local service seams
@@ -189,43 +160,13 @@ final class BloomTests: XCTestCase {
         )
     }
 
-    // MARK: - M13 AutoAlignProcessor math
-
-    func testAutoAlignIsIdentityWhenLandmarksMatch() {
-        let landmarks = AutoAlignProcessor.LandmarkSet(
-            centroid: CGPoint(x: 100, y: 200),
-            axisAngleRadians: 0.1
-        )
-        let alignment = AutoAlignProcessor.computeAlignment(
-            candidate: landmarks, reference: landmarks
-        )
-        XCTAssertEqual(alignment.translation.width, 0, accuracy: 1e-6)
-        XCTAssertEqual(alignment.translation.height, 0, accuracy: 1e-6)
-        XCTAssertEqual(alignment.rotationRadians, 0, accuracy: 1e-6)
-    }
-
-    func testAutoAlignTranslationAndRotation() {
-        let candidate = AutoAlignProcessor.LandmarkSet(
-            centroid: CGPoint(x: 10, y: 20), axisAngleRadians: 0
-        )
-        let reference = AutoAlignProcessor.LandmarkSet(
-            centroid: CGPoint(x: 30, y: 60), axisAngleRadians: .pi / 4
-        )
-        let alignment = AutoAlignProcessor.computeAlignment(
-            candidate: candidate, reference: reference
-        )
-        XCTAssertEqual(alignment.translation.width, 20, accuracy: 1e-6)
-        XCTAssertEqual(alignment.translation.height, 40, accuracy: 1e-6)
-        XCTAssertEqual(alignment.rotationRadians, .pi / 4, accuracy: 1e-6)
-    }
-
     // MARK: - Helpers
 
     @MainActor
     private func makeInMemoryContext() throws -> ModelContext {
         let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(
-            for: Project.self, Photo.self, ReferenceShot.self,
+            for: Project.self, Photo.self,
             configurations: configuration
         )
         return ModelContext(container)

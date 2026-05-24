@@ -36,16 +36,21 @@ struct OnboardingView: View {
 
     @ViewBuilder
     private var pages: some View {
-        TabView(selection: $pageIndex) {
-            valuePage
-                .tag(0)
-            privacyPage
-                .tag(1)
-            notificationsPage
-                .tag(2)
+        ZStack {
+            switch pageIndex {
+            case 0:
+                valuePage
+                    .transition(.opacity)
+            case 1:
+                privacyPage
+                    .transition(.opacity)
+            default:
+                notificationsPage
+                    .transition(.opacity)
+            }
         }
-        .tabViewStyle(.page(indexDisplayMode: .never))
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .animation(.easeOut(duration: 0.18), value: pageIndex)
     }
 
     private var valuePage: some View {
@@ -60,7 +65,7 @@ struct OnboardingView: View {
         OnboardingPanel(
             backdrop: NeonPlayroom.limeSqueeze,
             headline: "Your photos\nstay on\nthis phone.",
-            subhead: "Bloom Tracker doesn't add anything to your camera roll. Export your projects any time.",
+            subhead: "Bloom Tracker doesn't add anything to your camera roll.",
             actionLabel: cameraGranted == nil ? "Allow camera access" : "Camera access ready",
             actionDisabled: cameraGranted == true,
             action: requestCamera
@@ -137,7 +142,7 @@ struct OnboardingView: View {
 
     private func advance() {
         if pageIndex < totalPages - 1 {
-            withAnimation(.spring(duration: 0.3)) { pageIndex += 1 }
+            pageIndex += 1
         } else {
             finish()
         }

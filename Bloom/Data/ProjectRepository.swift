@@ -78,11 +78,7 @@ struct ProjectRepository {
             fileRef: fileRef,
             thumbRef: thumbRef,
             capturedAt: meta.capturedAt,
-            note: meta.note,
-            pitch: meta.pitch,
-            roll: meta.roll,
-            yaw: meta.yaw,
-            zoom: meta.zoom
+            note: meta.note
         )
         context.insert(photo)
         var photos = project.photos.filter { $0.id != photo.id }

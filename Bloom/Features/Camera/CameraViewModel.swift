@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 /// Drives the Camera screen — owns transient capture state and orchestrates
-/// the session, motion tracker, and self-timer (PRD §3.3).
+/// the session and self-timer (PRD §3.3).
 @MainActor
 @Observable
 final class CameraViewModel {
@@ -16,25 +16,9 @@ final class CameraViewModel {
     var permissionDenied: Bool = false
     var captureErrorMessage: String? = nil
 
-    // MARK: - Inputs
-
-    /// Last-recorded zoom factor on the project — used as the initial zoom.
-    let lockedZoom: CGFloat?
-
-    init(referencePhoto: Photo?) {
-        self.lockedZoom = referencePhoto.flatMap { CGFloat($0.zoom ?? 1.0) }
-    }
-
-    // MARK: - Setup hooks
-
-    func applyLockedZoom(to session: CameraSession) {
-        guard let lockedZoom else { return }
-        session.applyZoom(lockedZoom)
-    }
-
     // MARK: - Shutter
 
-    func shutterTapped(session: CameraSession, motion: MotionTracker) async {
+    func shutterTapped(session: CameraSession) async {
         guard !isCapturing else { return }
         Haptics.tap(style: .medium)
 
@@ -47,16 +31,10 @@ final class CameraViewModel {
             isCapturing = true
             defer { isCapturing = false }
             let image = try await session.capture()
+            session.stop()
             Haptics.success()
 
-            let meta = CaptureMeta(
-                pitch: motion.pitch,
-                roll: motion.roll,
-                yaw: motion.yaw,
-                zoom: Double(session.currentZoom),
-                capturedAt: .now,
-                note: nil
-            )
+            let meta = CaptureMeta(capturedAt: .now, note: nil)
             capturedImage = image
             lastCaptureMeta = meta
         } catch {

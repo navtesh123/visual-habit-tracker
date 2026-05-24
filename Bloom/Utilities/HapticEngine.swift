@@ -1,7 +1,7 @@
 import UIKit
 
 /// Wrapper around `UIImpactFeedbackGenerator` for short tactile cues
-/// on capture, save, and compare-slider snap points.
+/// on capture, save, and small control changes.
 enum Haptics {
     static func tap(style: UIImpactFeedbackGenerator.FeedbackStyle = .medium) {
         let g = UIImpactFeedbackGenerator(style: style)

@@ -8,7 +8,6 @@ import Foundation
 enum AppSettings {
     enum Key {
         static let hasCompletedOnboarding   = "progress.hasCompletedOnboarding"
-        static let cloudKitBackupEnabled    = "progress.cloudKitBackupEnabled"
         static let globalReminderHour       = "progress.globalReminderHour"
         static let globalReminderMinute     = "progress.globalReminderMinute"
         static let notificationsAuthorized  = "progress.notificationsAuthorized"
@@ -18,11 +17,6 @@ enum AppSettings {
     static var hasCompletedOnboarding: Bool {
         get { UserDefaults.standard.bool(forKey: Key.hasCompletedOnboarding) }
         set { UserDefaults.standard.set(newValue, forKey: Key.hasCompletedOnboarding) }
-    }
-
-    static var cloudKitBackupEnabled: Bool {
-        get { UserDefaults.standard.bool(forKey: Key.cloudKitBackupEnabled) }
-        set { UserDefaults.standard.set(newValue, forKey: Key.cloudKitBackupEnabled) }
     }
 
     static var notificationsAuthorized: Bool {

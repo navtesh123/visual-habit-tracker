@@ -55,10 +55,8 @@ struct HomeView: View {
             CameraView(project: project)
         }
         .onChange(of: pendingCaptureProject) { _, newValue in
-            // The instant the user commits to opening the camera, kick off
-            // the full capture pipeline so `startRunning()` overlaps with
-            // the navigation push transition. The preview layer is then
-            // already streaming frames by the time CameraView is visible.
+            // Delay prewarm until the push gesture has cleared; CameraView
+            // owns `startRunning()` once it is visible.
             if newValue != nil {
                 CameraSession.shared.beginCapturePath()
             }
@@ -225,6 +223,7 @@ struct HomeView: View {
     }
 
     private func backfillPhotoSummariesIfNeeded() {
+        guard !projects.isEmpty else { return }
         do {
             try ProjectRepository(context: context).backfillPhotoSummaries(projects: projects)
         } catch {

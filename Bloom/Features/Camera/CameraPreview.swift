@@ -25,6 +25,10 @@ struct CameraPreview: UIViewRepresentable {
         }
     }
 
+    static func dismantleUIView(_ uiView: PreviewUIView, coordinator: ()) {
+        uiView.videoPreviewLayer.session = nil
+    }
+
     final class PreviewUIView: UIView {
         override class var layerClass: AnyClass { AVCaptureVideoPreviewLayer.self }
         var videoPreviewLayer: AVCaptureVideoPreviewLayer {

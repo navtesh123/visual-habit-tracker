@@ -6,7 +6,7 @@ options:
   developmentLanguage: en
   createIntermediateGroups: true
   groupSortPosition: top
-  generateEmptyDirectories: true
+  generateEmptyDirectories: false
   xcodeVersion: "26.0"
 settings:
   base:
@@ -23,7 +23,6 @@ targets:
       - path: Bloom
         excludes:
           - "**/.DS_Store"
-          - "Features/Backup/**"
     resources:
       - path: Bloom/Resources/Assets.xcassets
       - path: Bloom/Resources/Fonts
