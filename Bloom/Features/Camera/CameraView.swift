@@ -4,18 +4,19 @@ import UIKit
 
 /// The critical screen (PRD §3.3). Stacks, bottom-to-top:
 /// 1. Live `CameraPreview` (content layer, full-bleed).
-/// 2. Ghost overlay of the previous photo.
-/// 3. Rule-of-thirds grid.
-/// 4. Bubble-level indicator with alignment target.
-/// 5. Glass control strip (FAB-style shutter, timer, ghost controls).
+/// 2. Rule-of-thirds grid.
+/// 3. Glass control strip (FAB-style shutter, timer).
 struct CameraView: View {
     let project: Project
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
 
-    @StateObject private var session = CameraSession()
-    @StateObject private var motion = MotionTracker()
+    /// Reuse the process-wide camera session so re-entries (and the very
+    /// first capture after install) skip `configure()` entirely once it's
+    /// been paid for via `CameraSession.shared.prewarm()` on Home.
+    @ObservedObject private var session = CameraSession.shared
+    @State private var motion = MotionTracker()
     @State private var viewModel: CameraViewModel
     @State private var didPresentReview: Bool = false
 
@@ -33,27 +34,12 @@ struct CameraView: View {
             CameraPreview(session: session.session)
                 .ignoresSafeArea()
 
-            if viewModel.ghostEnabled {
-                GhostOverlayView(
-                    image: viewModel.referenceImage,
-                    opacity: viewModel.ghostOpacity
-                )
-                .ignoresSafeArea()
-            }
-
             RuleOfThirdsGrid()
                 .ignoresSafeArea()
 
             VStack {
                 topBar
                 Spacer()
-                LevelIndicator(
-                    pitch: motion.pitch,
-                    roll: motion.roll,
-                    targetPitch: viewModel.targetPitch,
-                    targetRoll: viewModel.targetRoll,
-                    alignmentTolerance: 0.05
-                )
                 Spacer()
                 bottomBar
             }
@@ -71,8 +57,11 @@ struct CameraView: View {
             if case .denied = session.status {
                 permissionDenied
             }
+            if case .failed(let error) = session.status {
+                cameraFailed(error)
+            }
         }
-        .background(NavigationSwipeBackDisabler())
+        .background(Color.black)
         .preferredColorScheme(.dark)
         .navigationBarBackButtonHidden(true)
         .task {
@@ -82,9 +71,9 @@ struct CameraView: View {
                 return
             }
             await session.configure()
+            guard case .ready = session.status else { return }
             session.start()
             motion.start()
-            viewModel.loadReferenceImage()
             viewModel.applyLockedZoom(to: session)
         }
         .onDisappear {
@@ -102,6 +91,8 @@ struct CameraView: View {
                 if saved {
                     dismiss()
                 }
+            } onDiscard: {
+                dismiss()
             }
         }
     }
@@ -139,16 +130,7 @@ struct CameraView: View {
 
             Spacer()
 
-            Button {
-                viewModel.toggleGhost()
-            } label: {
-                Image(systemName: viewModel.ghostEnabled ? "rectangle.stack.fill" : "rectangle.stack")
-                    .font(.headline)
-                    .frame(width: 40, height: 40)
-                    .foregroundStyle(viewModel.ghostEnabled ? NeonPlayroom.limeSqueeze : NeonPlayroom.ghostWhite)
-            }
-            .glassControl()
-            .accessibilityLabel(viewModel.ghostEnabled ? "Hide ghost overlay" : "Show ghost overlay")
+            Color.clear.frame(width: 40, height: 40)
         }
     }
 
@@ -156,10 +138,6 @@ struct CameraView: View {
 
     private var bottomBar: some View {
         VStack(spacing: 14) {
-            if viewModel.ghostEnabled && viewModel.referenceImage != nil {
-                ghostSlider
-            }
-
             HStack(alignment: .center, spacing: 18) {
                 timerChip
                 Spacer()
@@ -168,20 +146,6 @@ struct CameraView: View {
                 Color.clear.frame(width: 56, height: 56)
             }
         }
-    }
-
-    private var ghostSlider: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "circle.dotted")
-                .foregroundStyle(NeonPlayroom.ghostWhite.opacity(0.75))
-            Slider(value: $viewModel.ghostOpacity, in: 0.0...0.6)
-                .tint(NeonPlayroom.limeSqueeze)
-            Image(systemName: "rectangle.stack.fill")
-                .foregroundStyle(NeonPlayroom.ghostWhite)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
-        .glassControl()
     }
 
     private var timerChip: some View {
@@ -216,7 +180,7 @@ struct CameraView: View {
             }
             .padding(6)
         }
-        .buttonStyle(.glass)
+        .buttonStyle(GlassButtonStyle())
         .disabled(viewModel.isCapturing || session.status.isNotReady)
         .accessibilityLabel("Capture photo")
     }
@@ -247,6 +211,34 @@ struct CameraView: View {
                 }
             }
         )
+    }
+
+    // MARK: - Camera failed state
+
+    private func cameraFailed(_ error: Error) -> some View {
+        VStack(spacing: 18) {
+            Image(systemName: "camera.fill.badge.exclamationmark")
+                .font(.system(size: 44))
+                .foregroundStyle(NeonPlayroom.ghostWhite.opacity(0.85))
+            Text("Camera unavailable")
+                .displayStyle(28)
+                .foregroundStyle(NeonPlayroom.ghostWhite)
+            Text(error.localizedDescription)
+                .bodyStyle(13)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(NeonPlayroom.ghostWhite.opacity(0.6))
+                .padding(.horizontal, 32)
+            Button("Go back") { dismiss() }
+                .bodyStyle(15, weight: .semibold)
+                .padding(.horizontal, 22)
+                .padding(.vertical, 12)
+                .foregroundStyle(NeonPlayroom.midnightAbyss)
+                .background(NeonPlayroom.limeSqueeze, in: AppShape.pill)
+                .buttonStyle(.plain)
+        }
+        .padding(28)
+        .background(NeonPlayroom.midnightAbyss.opacity(0.85), in: AppShape.card)
+        .padding(.horizontal, 24)
     }
 
     // MARK: - Permission denied state
@@ -293,50 +285,5 @@ private extension CameraSession.Status {
     var isNotReady: Bool {
         if case .ready = self { return false }
         return true
-    }
-}
-
-// MARK: - Swipe-back suppressor
-//
-// The horizontal ghost-opacity slider conflicts with NavigationStack's
-// interactive pop gesture — dragging the slider triggers a swipe-back
-// and reveals the previous screen.
-//
-// Using UIViewRepresentable so the injected UIView is always part of the
-// window responder chain, which reliably leads to the UINavigationController
-// regardless of how SwiftUI nests its hosting containers.
-
-private struct NavigationSwipeBackDisabler: UIViewRepresentable {
-    func makeUIView(context: Context) -> _View { _View() }
-    func updateUIView(_ uiView: _View, context: Context) {}
-
-    final class _View: UIView {
-        private weak var cachedNav: UINavigationController?
-
-        override func didMoveToWindow() {
-            super.didMoveToWindow()
-            if window != nil {
-                // A small delay lets SwiftUI finish wiring the responder chain.
-                DispatchQueue.main.async { [weak self] in
-                    guard let self else { return }
-                    self.cachedNav = self.findNavController()
-                    self.cachedNav?.interactivePopGestureRecognizer?.isEnabled = false
-                }
-            } else {
-                // View is leaving — restore using the cached reference before
-                // the responder chain is torn down.
-                cachedNav?.interactivePopGestureRecognizer?.isEnabled = true
-                cachedNav = nil
-            }
-        }
-
-        private func findNavController() -> UINavigationController? {
-            var responder: UIResponder? = self
-            while let r = responder {
-                if let nav = r as? UINavigationController { return nav }
-                responder = r.next
-            }
-            return nil
-        }
     }
 }

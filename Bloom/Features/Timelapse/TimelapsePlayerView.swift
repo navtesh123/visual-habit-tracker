@@ -252,7 +252,6 @@ struct TimelapsePlayerView: View {
                 frames: loadedImages,
                 speed: speed,
                 projectName: project.name,
-                accent: project.accentColor,
                 normalize: true
             )
             await MainActor.run { sharePayload = ShareableMP4(url: url) }

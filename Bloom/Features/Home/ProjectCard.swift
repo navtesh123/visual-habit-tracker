@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// One row in the Home list. Content layer — solid brand accent border
-/// using the project's chosen Neon Playroom token (PRD §3.1, §7.1).
+/// One row in the Home list (PRD §3.1, §7.1).
 struct ProjectCard: View {
     let project: Project
     @State private var thumbnail: UIImage?
@@ -30,7 +29,7 @@ struct ProjectCard: View {
                         .foregroundStyle(NeonPlayroom.ghostWhite.opacity(0.6))
                 }
 
-                if project.isBehindCadence, let gap = project.daysSinceLastCapture {
+                if project.cachedIsBehindCadence, let gap = project.cachedDaysSinceLastCapture {
                     Text("Last shot \(gap) days ago")
                         .bodyStyle(12, weight: .medium)
                         .padding(.horizontal, 10)
@@ -46,10 +45,10 @@ struct ProjectCard: View {
         .background(NeonPlayroom.midnightAbyss, in: AppShape.card)
         .overlay(
             AppShape.card
-                .strokeBorder(project.accentColor.color, lineWidth: 3)
+                .strokeBorder(NeonPlayroom.limeSqueeze, lineWidth: 3)
         )
-        .task(id: project.latestPhoto?.id) {
-            loadThumbnail()
+        .task(id: project.cachedLatestPhotoID) {
+            await loadThumbnail()
         }
     }
 
@@ -59,15 +58,15 @@ struct ProjectCard: View {
             Image(uiImage: thumbnail)
                 .resizable()
                 .scaledToFill()
-        } else if project.latestPhoto != nil {
+        } else if project.cachedLatestPhotoCapturedAt != nil {
             ZStack {
-                project.accentColor.color.opacity(0.4)
+                NeonPlayroom.limeSqueeze.opacity(0.4)
                 ProgressView()
                     .tint(NeonPlayroom.ghostWhite)
             }
         } else {
             ZStack {
-                project.accentColor.color.opacity(0.35)
+                NeonPlayroom.limeSqueeze.opacity(0.35)
                 Image(systemName: project.subjectType.systemImage)
                     .font(.title)
                     .foregroundStyle(NeonPlayroom.ghostWhite.opacity(0.9))
@@ -76,20 +75,20 @@ struct ProjectCard: View {
     }
 
     private var lastCapturedSubtitle: String {
-        guard let latest = project.latestPhoto else { return "No photos yet" }
-        return RelativeDateFormatting.relative(from: latest.capturedAt)
+        guard let capturedAt = project.cachedLatestPhotoCapturedAt else { return "No photos yet" }
+        return RelativeDateFormatting.relative(from: capturedAt)
     }
 
     private var photoCountText: String {
-        let n = project.photos.count
+        let n = project.cachedPhotoCount
         return n == 1 ? "1 photo" : "\(n) photos"
     }
 
-    private func loadThumbnail() {
-        guard let latest = project.latestPhoto else {
+    private func loadThumbnail() async {
+        guard let thumbRef = project.cachedLatestPhotoThumbRef else {
             thumbnail = nil
             return
         }
-        thumbnail = PhotoStore.shared.loadThumb(latest)
+        thumbnail = await PhotoStore.shared.loadThumbAsync(relativePath: thumbRef)
     }
 }

@@ -35,7 +35,6 @@ enum ProjectExporter {
                 frames: frames,
                 speed: speed,
                 projectName: project.name,
-                accent: project.accentColor,
                 normalize: true
             )
         } catch {
@@ -54,7 +53,6 @@ enum ProjectExporter {
         guard !payload.isEmpty else { throw ExportError.noPhotos }
         guard let image = ContactSheetRenderer.render(
             projectName: project.name,
-            accent: project.accentColor,
             photos: payload
         ) else {
             throw ExportError.renderFailure(underlying: NSError(

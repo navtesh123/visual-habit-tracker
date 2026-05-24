@@ -12,6 +12,7 @@ enum AppSettings {
         static let globalReminderHour       = "progress.globalReminderHour"
         static let globalReminderMinute     = "progress.globalReminderMinute"
         static let notificationsAuthorized  = "progress.notificationsAuthorized"
+        static let lastReminderSyncFingerprint = "progress.lastReminderSyncFingerprint"
     }
 
     static var hasCompletedOnboarding: Bool {
@@ -27,6 +28,14 @@ enum AppSettings {
     static var notificationsAuthorized: Bool {
         get { UserDefaults.standard.bool(forKey: Key.notificationsAuthorized) }
         set { UserDefaults.standard.set(newValue, forKey: Key.notificationsAuthorized) }
+    }
+
+    /// Hash of the project list shape that drove the last reminder resync.
+    /// We compare on launch and only re-run the (system-call-heavy) resync
+    /// when the shape actually changed since the previous launch.
+    static var lastReminderSyncFingerprint: String? {
+        get { UserDefaults.standard.string(forKey: Key.lastReminderSyncFingerprint) }
+        set { UserDefaults.standard.set(newValue, forKey: Key.lastReminderSyncFingerprint) }
     }
 
     /// Default reminder time. Stored as hour+minute so daylight-savings

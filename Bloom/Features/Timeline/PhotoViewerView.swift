@@ -33,7 +33,7 @@ struct PhotoViewerView: View {
         }
         .preferredColorScheme(.dark)
         .task {
-            fullImage = PhotoStore.shared.loadFullImage(photo)
+            fullImage = await PhotoStore.shared.loadFullImageAsync(photo)
         }
         .confirmationDialog(
             "Delete this photo?",

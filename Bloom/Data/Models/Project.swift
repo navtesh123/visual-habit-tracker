@@ -12,12 +12,18 @@ final class Project {
     var subjectTypeRaw: String
     var cadenceRaw: String
     var reminderTime: Date?
-    var accentColorTokenRaw: String
     var createdAt: Date
 
     /// Habit-stacked reminder copy (PRD §6, M8). Optional for migration
     /// safety — projects created before M8 default to `.custom`.
     var reminderHabitRaw: String?
+
+    /// Summary fields used by Home so app launch does not have to fault and
+    /// sort every photo relationship before the project list can render.
+    var photoCountCache: Int?
+    var latestPhotoIDCache: UUID?
+    var latestPhotoCapturedAtCache: Date?
+    var latestPhotoThumbRefCache: String?
 
     @Relationship(deleteRule: .cascade, inverse: \Photo.project)
     var photos: [Photo] = []
@@ -32,7 +38,6 @@ final class Project {
         cadence: Cadence = .weekly,
         reminderTime: Date? = nil,
         reminderHabit: ReminderHabit = .custom,
-        accentColor: AccentToken = .default,
         createdAt: Date = .now
     ) {
         self.id = id
@@ -41,7 +46,6 @@ final class Project {
         self.cadenceRaw = cadence.rawValue
         self.reminderTime = reminderTime
         self.reminderHabitRaw = reminderHabit.rawValue
-        self.accentColorTokenRaw = accentColor.rawValue
         self.createdAt = createdAt
     }
 
@@ -55,11 +59,6 @@ final class Project {
         set { cadenceRaw = newValue.rawValue }
     }
 
-    var accentColor: AccentToken {
-        get { AccentToken(rawValue: accentColorTokenRaw) ?? .default }
-        set { accentColorTokenRaw = newValue.rawValue }
-    }
-
     var reminderHabit: ReminderHabit {
         get { ReminderHabit(rawValue: reminderHabitRaw ?? "") ?? .custom }
         set { reminderHabitRaw = newValue.rawValue }
@@ -71,12 +70,63 @@ final class Project {
         photos.sorted { $0.capturedAt < $1.capturedAt }
     }
 
+    var photoSummaryNeedsBackfill: Bool {
+        photoCountCache == nil
+    }
+
+    var cachedPhotoCount: Int {
+        photoCountCache ?? 0
+    }
+
+    var cachedLatestPhotoID: UUID? {
+        latestPhotoIDCache
+    }
+
+    var cachedLatestPhotoCapturedAt: Date? {
+        latestPhotoCapturedAtCache
+    }
+
+    var cachedLatestPhotoThumbRef: String? {
+        latestPhotoThumbRefCache
+    }
+
+    var cachedDaysSinceLastCapture: Int? {
+        guard let latest = latestPhotoCapturedAtCache else { return nil }
+        let comps = Calendar.current.dateComponents([.day], from: latest, to: .now)
+        return comps.day
+    }
+
+    var cachedIsBehindCadence: Bool {
+        guard
+            let threshold = cadence.gapThresholdDays,
+            let gap = cachedDaysSinceLastCapture
+        else { return false }
+        return gap > threshold
+    }
+
+    func refreshPhotoSummaryFromPhotos() {
+        refreshPhotoSummary(from: photos)
+    }
+
+    func refreshPhotoSummary(from photos: [Photo]) {
+        photoCountCache = photos.count
+        guard let latest = photos.max(by: { $0.capturedAt < $1.capturedAt }) else {
+            latestPhotoIDCache = nil
+            latestPhotoCapturedAtCache = nil
+            latestPhotoThumbRefCache = nil
+            return
+        }
+        latestPhotoIDCache = latest.id
+        latestPhotoCapturedAtCache = latest.capturedAt
+        latestPhotoThumbRefCache = latest.thumbRef
+    }
+
     var latestPhoto: Photo? {
-        photosByDateAscending.last
+        photos.max(by: { $0.capturedAt < $1.capturedAt })
     }
 
     var firstPhoto: Photo? {
-        photosByDateAscending.first
+        photos.min(by: { $0.capturedAt < $1.capturedAt })
     }
 
     /// The photo whose framing should be used as the camera ghost overlay.

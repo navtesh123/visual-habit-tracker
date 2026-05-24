@@ -15,7 +15,6 @@ enum ContactSheetRenderer {
     /// a single coherent PNG.
     static func render(
         projectName: String,
-        accent: AccentToken,
         photos: [(image: UIImage, capturedAt: Date)],
         columnsPerRow: Int = 3
     ) -> UIImage? {
@@ -23,7 +22,6 @@ enum ContactSheetRenderer {
 
         let view = ContactSheet(
             projectName: projectName,
-            accent: accent,
             photos: photos,
             columnsPerRow: max(1, columnsPerRow)
         )
@@ -35,7 +33,6 @@ enum ContactSheetRenderer {
 
 private struct ContactSheet: View {
     let projectName: String
-    let accent: AccentToken
     let photos: [(image: UIImage, capturedAt: Date)]
     let columnsPerRow: Int
 
@@ -75,7 +72,7 @@ private struct ContactSheet: View {
         .padding(.horizontal, outerPadding)
         .padding(.vertical, 28)
         .frame(width: canvasWidth)
-        .background(accent.color)
+        .background(NeonPlayroom.limeSqueeze)
     }
 
     private var grid: some View {

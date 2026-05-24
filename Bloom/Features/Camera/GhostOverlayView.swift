@@ -1,27 +1,5 @@
 import SwiftUI
 
-/// The most important feature in the app (PRD §3.3).
-///
-/// Renders the previous (or chosen reference) photo as a semi-transparent
-/// overlay above the live preview so the user can physically align the
-/// current pose/framing to match.
-struct GhostOverlayView: View {
-    let image: UIImage?
-    let opacity: Double
-
-    var body: some View {
-        if let image, opacity > 0 {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFill()
-                .opacity(opacity)
-                .allowsHitTesting(false)
-                .accessibilityLabel("Previous photo overlay")
-                .accessibilityHidden(true)
-        }
-    }
-}
-
 /// Rule-of-thirds grid drawn over the live preview to help centering (PRD §3.3).
 struct RuleOfThirdsGrid: View {
     var lineColor: Color = NeonPlayroom.ghostWhite.opacity(0.35)

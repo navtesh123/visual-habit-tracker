@@ -2,7 +2,7 @@
 //
 // Produces an MP4 from a project's photo sequence using `AVAssetWriter`.
 // Each photo is held for `1.0 / speed` seconds; frames are normalized for
-// exposure/white-balance coherence; the end-card (project name + accent) is
+// exposure/white-balance coherence; the end-card (project name) is
 // composited as the final frame.
 
 import Foundation
@@ -53,14 +53,12 @@ enum TimelapseRenderer {
         frames: [TimelapseFrame],
         speed: Double,
         projectName: String,
-        accent: AccentToken,
         normalize: Bool = true
     ) async throws -> URL {
         guard frames.count >= 1 else { throw RenderError.noFrames }
 
         let endCard = await TimelapseEndCard.render(
             projectName: projectName,
-            accent: accent,
             photoCount: frames.count,
             size: canvasSize
         )

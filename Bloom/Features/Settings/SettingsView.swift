@@ -262,7 +262,7 @@ private struct PerProjectRow: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Circle()
-                    .fill(project.accentColor.color)
+                    .fill(NeonPlayroom.limeSqueeze)
                     .frame(width: 10, height: 10)
                 Text(project.name)
                     .bodyStyle(15, weight: .semibold)

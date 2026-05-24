@@ -63,7 +63,35 @@ struct HomeView: View {
         .navigationDestination(item: $pendingCaptureProject) { project in
             CameraView(project: project)
         }
+        .onChange(of: pendingCaptureProject) { _, newValue in
+            // The instant the user commits to opening the camera, kick off
+            // the full capture pipeline so `startRunning()` overlaps with
+            // the navigation push transition. The preview layer is then
+            // already streaming frames by the time CameraView is visible.
+            if newValue != nil {
+                CameraSession.shared.beginCapturePath()
+            }
+        }
         .task {
+            // Cheap, render-critical: only fix up summary caches that
+            // missing fields (one-time per pre-existing project).
+            await Task.yield()
+            backfillPhotoSummariesIfNeeded()
+        }
+        .task(priority: .background) {
+            // Pre-warm the camera session past first paint so the very
+            // first capture-button tap (cold-launch path on a fresh
+            // install) doesn't pay AVFoundation device-discovery cost.
+            // Configures only — does not power on hardware, so no system
+            // "camera in use" indicator while the user is on Home.
+            try? await Task.sleep(for: .milliseconds(800))
+            await CameraSession.shared.prewarm()
+        }
+        .task(priority: .utility) {
+            // Defer the CloudKit network probe past first paint so it
+            // doesn't compete with the initial render. Disabled-backup
+            // case returns immediately and is essentially free.
+            try? await Task.sleep(for: .milliseconds(1_500))
             backup.refresh()
         }
     }
@@ -79,7 +107,7 @@ struct HomeView: View {
                     .foregroundStyle(Color(uiColor: .systemGray))
                     .frame(width: 36, height: 36)
             }
-            .buttonStyle(.glass)
+            .buttonStyle(GlassButtonStyle())
             .accessibilityLabel("Settings")
         }
         ToolbarItem(placement: .principal) {
@@ -95,7 +123,7 @@ struct HomeView: View {
                     .font(.headline)
                     .frame(width: 36, height: 36)
             }
-            .buttonStyle(.glass)
+            .buttonStyle(GlassButtonStyle())
             .accessibilityLabel("New project")
         }
     }
@@ -191,7 +219,7 @@ struct HomeView: View {
                     .foregroundStyle(NeonPlayroom.midnightAbyss)
                     .background(NeonPlayroom.limeSqueeze, in: AppShape.pill)
             }
-            .buttonStyle(.glass)
+            .buttonStyle(GlassButtonStyle())
             .accessibilityLabel("Capture photo")
         }
     }
@@ -210,6 +238,15 @@ struct HomeView: View {
 
     private func delete(_ project: Project) {
         context.delete(project)
+        try? context.save()
+    }
+
+    private func backfillPhotoSummariesIfNeeded() {
+        let projectsNeedingBackfill = projects.filter(\.photoSummaryNeedsBackfill)
+        guard !projectsNeedingBackfill.isEmpty else { return }
+        for project in projectsNeedingBackfill {
+            project.refreshPhotoSummaryFromPhotos()
+        }
         try? context.save()
     }
 }
@@ -233,7 +270,7 @@ private struct ProjectPickerSheet: View {
                         } label: {
                             HStack(spacing: 14) {
                                 Circle()
-                                    .fill(project.accentColor.color)
+                                    .fill(NeonPlayroom.limeSqueeze)
                                     .frame(width: 18, height: 18)
                                 Text(project.name)
                                     .bodyStyle(17, weight: .medium)

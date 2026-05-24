@@ -132,8 +132,7 @@ struct CompareView: View {
                         DateChip(
                             photo: photo,
                             isLeft: leftPhoto?.id == photo.id,
-                            isRight: rightPhoto?.id == photo.id,
-                            accent: project.accentColor.color
+                            isRight: rightPhoto?.id == photo.id
                         ) {
                             assign(photo)
                         }
@@ -197,7 +196,6 @@ struct CompareView: View {
             right: rightImage,
             leftDate: leftPhoto.capturedAt,
             rightDate: rightPhoto.capturedAt,
-            accent: project.accentColor.color,
             title: project.name
         )
         guard let rendered else { return }
@@ -236,8 +234,20 @@ struct CompareView: View {
     }
 
     private func reloadImages() async {
-        let leftLoaded = leftPhoto.flatMap { PhotoStore.shared.loadFullImage($0) }
-        let rightLoaded = rightPhoto.flatMap { PhotoStore.shared.loadFullImage($0) }
+        // Decode off-main — full-res HEIC reads otherwise block UIKit
+        // gesture handling while the user scrubs the date strip.
+        let leftLoaded: UIImage?
+        if let p = leftPhoto {
+            leftLoaded = await PhotoStore.shared.loadFullImageAsync(p)
+        } else {
+            leftLoaded = nil
+        }
+        let rightLoaded: UIImage?
+        if let p = rightPhoto {
+            rightLoaded = await PhotoStore.shared.loadFullImageAsync(p)
+        } else {
+            rightLoaded = nil
+        }
         await MainActor.run {
             leftImage = leftLoaded
             rightImage = rightLoaded
@@ -249,15 +259,16 @@ private struct DateChip: View {
     let photo: Photo
     let isLeft: Bool
     let isRight: Bool
-    let accent: Color
     let action: () -> Void
+
+    @State private var thumb: UIImage?
 
     var body: some View {
         Button(action: action) {
             VStack(spacing: 4) {
                 ZStack {
                     NeonPlayroom.midnightAbyss
-                    if let thumb = PhotoStore.shared.loadThumb(photo) {
+                    if let thumb {
                         Image(uiImage: thumb)
                             .resizable()
                             .scaledToFill()
@@ -276,11 +287,16 @@ private struct DateChip: View {
             }
         }
         .buttonStyle(.plain)
+        .task(id: photo.id) {
+            // Off-main HEIC decode — synchronous reads here would block
+            // the gesture gate while scrubbing through the chip strip.
+            thumb = await PhotoStore.shared.loadThumbAsync(relativePath: photo.thumbRef)
+        }
     }
 
     private var border: Color {
         if isLeft || isRight { return NeonPlayroom.limeSqueeze }
-        return accent.opacity(0.3)
+        return NeonPlayroom.ghostWhite.opacity(0.3)
     }
 
     private var borderWidth: CGFloat {

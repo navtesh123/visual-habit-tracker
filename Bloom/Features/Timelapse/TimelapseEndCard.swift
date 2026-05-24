@@ -1,24 +1,19 @@
-// PRD §7.4 — branded end-card frame in the project's accent color, project
-// name in display font. Rendered to a single UIImage that the renderer can
-// stitch onto the end of the MP4.
+// PRD §7.4 — branded end-card frame, project name in display font.
+// Rendered to a single UIImage that the renderer stitches onto the end of the MP4.
 
 import SwiftUI
 import UIKit
 
 @MainActor
 enum TimelapseEndCard {
-    /// Build the branded end-card frame at `size`. Uses Neon Playroom tokens
-    /// in the project's accent color; falls back gracefully if fonts are
-    /// missing (the `AppFont` helpers already do this).
+    /// Build the branded end-card frame at `size`.
     static func render(
         projectName: String,
-        accent: AccentToken,
         photoCount: Int,
         size: CGSize
     ) -> UIImage? {
         let view = EndCard(
             projectName: projectName,
-            accent: accent,
             photoCount: photoCount
         )
         .frame(width: size.width, height: size.height)
@@ -31,12 +26,11 @@ enum TimelapseEndCard {
 
 private struct EndCard: View {
     let projectName: String
-    let accent: AccentToken
     let photoCount: Int
 
     var body: some View {
         ZStack {
-            accent.color.ignoresSafeArea()
+            NeonPlayroom.limeSqueeze.ignoresSafeArea()
             VStack(spacing: 18) {
                 Spacer(minLength: 0)
                 Text(projectName)

@@ -47,9 +47,39 @@ struct ProjectDetailView: View {
                     .displayStyle(22)
                     .foregroundStyle(NeonPlayroom.ghostWhite)
             }
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    Button {
+                        showCompare = true
+                    } label: {
+                        Label("Compare", systemImage: "rectangle.split.2x1")
+                    }
+                    .disabled(project.photos.count < 2)
+
+                    Button {
+                        showTimelapse = true
+                    } label: {
+                        Label("Timelapse", systemImage: "play.rectangle")
+                    }
+                    .disabled(project.photos.count < 2)
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(NeonPlayroom.ghostWhite)
+                        .frame(width: 36, height: 36)
+                        .background(Color.black.opacity(0.75), in: Circle())
+                }
+            }
         }
         .navigationDestination(isPresented: $showCamera) {
             CameraView(project: project)
+        }
+        .onChange(of: showCamera) { _, isPresented in
+            // Eagerly start the capture pipeline so `startRunning()` overlaps
+            // with the navigation push transition.
+            if isPresented {
+                CameraSession.shared.beginCapturePath()
+            }
         }
         .navigationDestination(isPresented: $showCompare) {
             CompareView(project: project)
@@ -90,7 +120,7 @@ struct ProjectDetailView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
                 Circle()
-                    .fill(project.accentColor.color)
+                    .fill(NeonPlayroom.limeSqueeze)
                     .frame(width: 12, height: 12)
                 Text(project.subjectType.displayName)
                     .bodyStyle(13, weight: .medium)
@@ -123,13 +153,13 @@ struct ProjectDetailView: View {
     private func monthlyChip(count: Int) -> some View {
         HStack(spacing: 6) {
             Image(systemName: "checkmark.seal.fill")
-                .foregroundStyle(project.accentColor.color)
+                .foregroundStyle(NeonPlayroom.limeSqueeze)
             Text("\(count) \(count == 1 ? "photo" : "photos") this month")
         }
         .bodyStyle(12, weight: .semibold)
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .background(project.accentColor.color.opacity(0.18), in: AppShape.chip)
+        .background(NeonPlayroom.limeSqueeze.opacity(0.18), in: AppShape.chip)
         .foregroundStyle(NeonPlayroom.ghostWhite)
     }
 
@@ -194,7 +224,7 @@ struct ProjectDetailView: View {
         VStack(spacing: 18) {
             Image(systemName: "camera.viewfinder")
                 .font(.system(size: 44))
-                .foregroundStyle(project.accentColor.color)
+                .foregroundStyle(NeonPlayroom.limeSqueeze)
             Text("No photos yet")
                 .displayStyle(28)
                 .foregroundStyle(NeonPlayroom.ghostWhite)
@@ -212,39 +242,8 @@ struct ProjectDetailView: View {
 
     private var actionBar: some View {
         GlassGroup {
-            HStack(spacing: 12) {
-                Button {
-                    showCompare = true
-                } label: {
-                    Label("Compare", systemImage: "rectangle.split.2x1")
-                        .bodyStyle(14, weight: .semibold)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 14)
-                        .foregroundStyle(NeonPlayroom.ghostWhite)
-                }
-                .glassControl()
-                .disabled(project.photos.count < 2)
-                .opacity(project.photos.count < 2 ? 0.5 : 1)
-
-                Button {
-                    showTimelapse = true
-                } label: {
-                    Label("Timelapse", systemImage: "play.rectangle")
-                        .bodyStyle(14, weight: .semibold)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 14)
-                        .foregroundStyle(
-                            project.photos.count < 2
-                            ? NeonPlayroom.ghostWhite.opacity(0.55)
-                            : NeonPlayroom.ghostWhite
-                        )
-                }
-                .glassControl()
-                .disabled(project.photos.count < 2)
-                .opacity(project.photos.count < 2 ? 0.5 : 1)
-
+            HStack {
                 Spacer()
-
                 Button {
                     showCamera = true
                 } label: {
@@ -259,6 +258,7 @@ struct ProjectDetailView: View {
                     .background(NeonPlayroom.limeSqueeze, in: AppShape.pill)
                 }
                 .buttonStyle(.plain)
+                Spacer()
             }
         }
     }
@@ -337,7 +337,11 @@ private struct PhotoThumbnail: View {
             }
         }
         .task(id: photo.id) {
-            image = PhotoStore.shared.loadThumb(photo)
+            // Decode off the main actor — synchronous file read + HEIC
+            // decode otherwise piles onto the main thread when many cells
+            // come into view at once and starves UIKit's gesture gate
+            // (PRD §3.5).
+            image = await PhotoStore.shared.loadThumbAsync(relativePath: photo.thumbRef)
         }
     }
 

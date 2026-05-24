@@ -27,8 +27,9 @@ extension EnvironmentValues {
 
 // MARK: - Glass modifiers
 //
-// Thin wrappers around iOS 26 Liquid Glass APIs (PRD §7.2). Only the
-// navigation/control layer should use these — never the content layer.
+// SDK-compatible wrappers for the navigation/control layer. On SDKs without
+// iOS 26 Liquid Glass symbols, these preserve the same surface hierarchy using
+// SwiftUI materials.
 
 extension View {
     /// Standard glass treatment for floating controls (default Capsule shape).
@@ -39,9 +40,7 @@ extension View {
         modifier(GlassControlModifier(shape: .capsule))
     }
 
-    /// Glass treatment shaped to a custom rounded rect. Prefer `.buttonStyle(.glass)`
-    /// for buttons — `.glassEffect` with `RoundedRectangle` can snap to Capsule
-    /// (PRD §7.2 known pitfall).
+    /// Glass treatment shaped to a custom rounded rect.
     @ViewBuilder
     func glassPanel(cornerRadius: CGFloat = AppShape.tileRadius) -> some View {
         modifier(GlassControlModifier(shape: .roundedRect(cornerRadius)))
@@ -60,41 +59,49 @@ private struct GlassControlModifier: ViewModifier {
     func body(content: Content) -> some View {
         switch shape {
         case .capsule:
-            if reduceTransparency {
-                content
-                    .background(.thickMaterial, in: AppShape.pill)
-                    .clipShape(AppShape.pill)
-            } else {
-                content
-                    .glassEffect(.regular, in: AppShape.pill)
-            }
+            content
+                .background(material, in: AppShape.pill)
+                .clipShape(AppShape.pill)
         case .roundedRect(let r):
             let s = RoundedRectangle(cornerRadius: r, style: .continuous)
-            if reduceTransparency {
-                content
-                    .background(.thickMaterial, in: s)
-                    .clipShape(s)
-            } else {
-                content
-                    .glassEffect(.regular, in: s)
-            }
+            content
+                .background(material, in: s)
+                .clipShape(s)
         }
+    }
+
+    private var material: Material {
+        reduceTransparency ? .thickMaterial : .ultraThinMaterial
     }
 }
 
 /// Wrap a group of glass controls so they morph and blend together
-/// (PRD §7.2 — `GlassEffectContainer`).
+/// where supported. On this SDK it simply preserves grouping semantics.
 struct GlassGroup<Content: View>: View {
-    @Environment(\.reduceTransparencyEnabled) private var reduceTransparency
     @ViewBuilder var content: () -> Content
 
     var body: some View {
-        if reduceTransparency {
-            content()
-        } else {
-            GlassEffectContainer {
-                content()
-            }
-        }
+        content()
+    }
+}
+
+struct GlassButtonStyle: ButtonStyle {
+    @Environment(\.reduceTransparencyEnabled) private var reduceTransparency
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background(material, in: AppShape.pill)
+            .clipShape(AppShape.pill)
+            .overlay(
+                AppShape.pill
+                    .strokeBorder(NeonPlayroom.ghostWhite.opacity(0.16), lineWidth: 1)
+            )
+            .opacity(configuration.isPressed ? 0.72 : 1)
+            .scaleEffect(configuration.isPressed ? 0.96 : 1)
+            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+    }
+
+    private var material: Material {
+        reduceTransparency ? .thickMaterial : .ultraThinMaterial
     }
 }

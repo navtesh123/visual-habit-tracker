@@ -14,7 +14,6 @@ enum ShareCompositionRenderer {
         right: UIImage,
         leftDate: Date,
         rightDate: Date,
-        accent: Color,
         title: String
     ) -> UIImage? {
         let view = ShareComposition(
@@ -22,7 +21,6 @@ enum ShareCompositionRenderer {
             rightImage: right,
             leftDate: leftDate,
             rightDate: rightDate,
-            accent: accent,
             title: title
         )
         let renderer = ImageRenderer(content: view)
@@ -36,7 +34,6 @@ private struct ShareComposition: View {
     let rightImage: UIImage
     let leftDate: Date
     let rightDate: Date
-    let accent: Color
     let title: String
 
     private let canvasWidth: CGFloat = 1080
@@ -61,7 +58,7 @@ private struct ShareComposition: View {
             .padding(.horizontal, 36)
             .padding(.vertical, 32)
             .frame(width: canvasWidth)
-            .background(accent)
+            .background(NeonPlayroom.limeSqueeze)
         }
         .frame(width: canvasWidth)
     }

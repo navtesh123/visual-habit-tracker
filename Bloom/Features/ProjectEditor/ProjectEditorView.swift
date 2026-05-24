@@ -37,7 +37,6 @@ struct ProjectEditorView: View {
         ) ?? .now
     }()
     @State private var reminderHabit: ReminderHabit = .custom
-    @State private var accent: AccentToken = .default
 
     var body: some View {
         NavigationStack {
@@ -83,11 +82,6 @@ struct ProjectEditorView: View {
                         .pickerStyle(.menu)
                     }
                 }
-
-                Section("Accent color") {
-                    AccentSwatchPicker(selection: $accent)
-                        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                }
             }
             .scrollContentBackground(.hidden)
             .background(NeonPlayroom.midnightAbyss.ignoresSafeArea())
@@ -131,7 +125,6 @@ struct ProjectEditorView: View {
                 reminderEnabled = false
             }
             reminderHabit = project.reminderHabit
-            accent = project.accentColor
         }
     }
 
@@ -147,8 +140,7 @@ struct ProjectEditorView: View {
                 subjectType: subjectType,
                 cadence: cadence,
                 reminderTime: resolvedReminder,
-                reminderHabit: reminderHabit,
-                accentColor: accent
+                reminderHabit: reminderHabit
             )
             context.insert(project)
         case .edit(let existing):
@@ -157,7 +149,6 @@ struct ProjectEditorView: View {
             existing.cadence = cadence
             existing.reminderTime = resolvedReminder
             existing.reminderHabit = reminderHabit
-            existing.accentColor = accent
             project = existing
         }
 
@@ -177,40 +168,6 @@ struct ProjectEditorView: View {
         } catch {
             // Keep sheet open on save failure; production would surface an alert.
             assertionFailure("Failed to save project: \(error)")
-        }
-    }
-}
-
-/// Horizontal row of Neon Playroom accent swatches (PRD §3.2, §7.3).
-private struct AccentSwatchPicker: View {
-    @Binding var selection: AccentToken
-
-    var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 12) {
-                ForEach(AccentToken.allCases) { token in
-                    Button {
-                        selection = token
-                        Haptics.tap(style: .light)
-                    } label: {
-                        ZStack {
-                            Circle()
-                                .fill(token.color)
-                                .frame(width: 36, height: 36)
-                            if selection == token {
-                                Circle()
-                                    .strokeBorder(NeonPlayroom.ghostWhite, lineWidth: 3)
-                                    .frame(width: 44, height: 44)
-                            }
-                        }
-                        .padding(4)
-                    }
-                    .accessibilityLabel(token.displayName)
-                    .accessibilityAddTraits(selection == token ? .isSelected : [])
-                    .buttonStyle(.plain)
-                }
-            }
-            .padding(.vertical, 4)
         }
     }
 }

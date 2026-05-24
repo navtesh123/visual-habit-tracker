@@ -15,7 +15,10 @@ import Vision
 import CoreImage
 import UIKit
 
-@MainActor
+// Intentionally not `@MainActor`: `VNImageRequestHandler.perform()` is a
+// synchronous blocking call. Running it on the main actor freezes UIKit's
+// gesture gate while Vision processes the photo. Callers should hop into
+// a background `Task` (which `ReviewSaveView.runAutoAlign()` already does).
 enum AutoAlignProcessor {
     enum AlignError: Error {
         case unsupportedSubject
@@ -102,7 +105,7 @@ enum AutoAlignProcessor {
         case .face:
             let request = VNDetectFaceLandmarksRequest()
             try handler.perform([request])
-            guard let face = (request.results as? [VNFaceObservation])?.first else {
+            guard let face = request.results?.first else {
                 return nil
             }
             return faceLandmarkSet(from: face, in: imageSize)
@@ -110,7 +113,7 @@ enum AutoAlignProcessor {
         case .body:
             let request = VNDetectHumanBodyPoseRequest()
             try handler.perform([request])
-            guard let pose = (request.results as? [VNHumanBodyPoseObservation])?.first else {
+            guard let pose = request.results?.first else {
                 return nil
             }
             return bodyLandmarkSet(from: pose, in: imageSize)
@@ -170,6 +173,8 @@ enum AutoAlignProcessor {
 
     // MARK: - Image transform
 
+    private static let ciContext = CIContext(options: [.useSoftwareRenderer: false])
+
     private static func applyAlignment(
         _ alignment: Alignment,
         to image: UIImage
@@ -179,7 +184,6 @@ enum AutoAlignProcessor {
         let imageExtent = ci.extent
         let center = CGPoint(x: imageExtent.midX, y: imageExtent.midY)
 
-        // Rotate about the image center, then translate.
         var transform = CGAffineTransform.identity
         transform = transform.translatedBy(x: center.x, y: center.y)
         transform = transform.rotated(by: alignment.rotationRadians)
@@ -188,8 +192,7 @@ enum AutoAlignProcessor {
 
         let transformed = ci.transformed(by: transform)
             .cropped(to: imageExtent)
-        let context = CIContext(options: nil)
-        guard let cgResult = context.createCGImage(transformed, from: imageExtent) else {
+        guard let cgResult = ciContext.createCGImage(transformed, from: imageExtent) else {
             throw AlignError.renderFailed
         }
         return UIImage(cgImage: cgResult, scale: image.scale, orientation: image.imageOrientation)

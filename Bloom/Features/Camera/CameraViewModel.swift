@@ -1,6 +1,5 @@
 import Foundation
 import UIKit
-import SwiftUI
 
 /// Drives the Camera screen — owns transient capture state and orchestrates
 /// the session, motion tracker, and self-timer (PRD §3.3).
@@ -9,8 +8,6 @@ import SwiftUI
 final class CameraViewModel {
     // MARK: - Outputs to the view
 
-    var ghostOpacity: Double = 0.30
-    var ghostEnabled: Bool = true
     var timerSeconds: Int = 0
     var countdownValue: Int? = nil
     var isCapturing: Bool = false
@@ -20,29 +17,14 @@ final class CameraViewModel {
 
     // MARK: - Inputs
 
-    /// Reference photo whose framing we want to match — drives both the ghost
-    /// overlay and the alignment target on the level indicator.
-    let referencePhoto: Photo?
-    /// Decoded reference image, lazily loaded.
-    var referenceImage: UIImage?
-
     /// Last-recorded zoom factor on the project — used as the initial zoom.
     let lockedZoom: CGFloat?
 
     init(referencePhoto: Photo?) {
-        self.referencePhoto = referencePhoto
         self.lockedZoom = referencePhoto.flatMap { CGFloat($0.zoom ?? 1.0) }
     }
 
-    var targetPitch: Double? { referencePhoto?.pitch }
-    var targetRoll: Double? { referencePhoto?.roll }
-
     // MARK: - Setup hooks
-
-    func loadReferenceImage() {
-        guard let reference = referencePhoto else { return }
-        referenceImage = PhotoStore.shared.loadFullImage(reference)
-    }
 
     func applyLockedZoom(to session: CameraSession) {
         guard let lockedZoom else { return }
@@ -82,11 +64,6 @@ final class CameraViewModel {
 
     func cycleTimer() {
         timerSeconds = (timerSeconds == 0) ? 3 : 0
-        Haptics.tap(style: .light)
-    }
-
-    func toggleGhost() {
-        ghostEnabled.toggle()
         Haptics.tap(style: .light)
     }
 

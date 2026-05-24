@@ -14,7 +14,6 @@ final class BloomTests: XCTestCase {
         XCTAssertEqual(project.name, "Bicep")
         XCTAssertEqual(project.subjectType, .object)
         XCTAssertEqual(project.cadence, .weekly)
-        XCTAssertEqual(project.accentColor, AccentToken.default)
         XCTAssertFalse(project.id.uuidString.isEmpty)
     }
 
@@ -23,13 +22,6 @@ final class BloomTests: XCTestCase {
         XCTAssertEqual(Cadence.weekly.expectedIntervalDays, 7)
         XCTAssertEqual(Cadence.daily.gapThresholdDays, 3)
         XCTAssertNil(Cadence.custom.expectedIntervalDays)
-    }
-
-    func testAccentTokenRoundTrip() {
-        for token in AccentToken.allCases {
-            let raw = token.rawValue
-            XCTAssertEqual(AccentToken(rawValue: raw), token)
-        }
     }
 
     func testProjectIsBehindCadenceFalseWhenNoPhotos() {
@@ -136,7 +128,7 @@ final class BloomTests: XCTestCase {
             schema: WidgetSnapshot.currentSchema,
             projectID: UUID(),
             projectName: "Beard",
-            accentTokenRaw: AccentToken.sunsetOrange.rawValue,
+            accentTokenRaw: "sunsetOrange",
             photoCount: 7,
             lastCaptureAt: Date(timeIntervalSince1970: 1_700_000_000),
             cumulativeThisMonth: 3,

@@ -17,11 +17,11 @@
 		3C8AFCFFA8210E132E13F728 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0B5ABC48F124F52CCC27A6 /* Project.swift */; };
 		44F14474D28488502B1CA7D3 /* ProjectDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37CD2AFF3218A94280274BC /* ProjectDetailView.swift */; };
 		48B6430ED3194B10B5B8ECF7 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197ECEB0C5153EB43B22B014 /* RootView.swift */; };
+		7B2A8F1D6E4C9B5A3D7F8E2C /* LaunchPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8C2D9A1B7E6F3D5C8A2E9B /* LaunchPlaceholderView.swift */; };
 		4D38D2398FDEFD7A3957BD0B /* BloomTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACD398B52BFC76963741006 /* BloomTests.swift */; };
 		52E39AAA33CBE297FB615B0C /* TimelapsePlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C088CA0F825A62DCFA4E41 /* TimelapsePlayerView.swift */; };
 		55A9FAD5C5B5206998E2BF48 /* TimelapseEndCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744BCEDD6F68451479D5CE04 /* TimelapseEndCard.swift */; };
 		55FBB4D77B9D44DCAF4E6200 /* NeonPlayroom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D218466FAC9AB6ADE4473C9 /* NeonPlayroom.swift */; };
-		58BE35DD2D49C6DE8E91C773 /* LevelIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C62BF8A0E20BEA6607BDBD /* LevelIndicator.swift */; };
 		5BBE6565F8CEDFF2720A5DBD /* CloudKitBackupController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9F2C0549E2E73B3CB8B197 /* CloudKitBackupController.swift */; };
 		5CF1194DAE89A0B3DEF5F08A /* GlassModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C5C1E840DC2F0784E7B554A /* GlassModifiers.swift */; };
 		617E12D2F644BA53A181A446 /* CameraSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512F2543D6D1FB40B1056CED /* CameraSession.swift */; };
@@ -76,9 +76,9 @@
 		12443824F9A7BB64265B29B8 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		13418BAC85BBAB6C6BE552B8 /* ProjectExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectExporter.swift; sourceTree = "<group>"; };
 		197ECEB0C5153EB43B22B014 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		4F8C2D9A1B7E6F3D5C8A2E9B /* LaunchPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchPlaceholderView.swift; sourceTree = "<group>"; };
 		1D2AFB0D3EDABDF5D77C369D /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		232F1BD7FF6BBD882FD737C6 /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
-		27C62BF8A0E20BEA6607BDBD /* LevelIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelIndicator.swift; sourceTree = "<group>"; };
 		2AF621CF6C9DFF7B5D0DE438 /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
 		2C82790EE6BFC3FBB40BC6BB /* Cadence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cadence.swift; sourceTree = "<group>"; };
 		2D218466FAC9AB6ADE4473C9 /* NeonPlayroom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonPlayroom.swift; sourceTree = "<group>"; };
@@ -233,7 +233,6 @@
 				8A26AED9B71D3E4464CA76D6 /* CameraView.swift */,
 				4E88E08D290202D69ADCF0E3 /* CameraViewModel.swift */,
 				BE10F52F588947082F2E29D2 /* GhostOverlayView.swift */,
-				27C62BF8A0E20BEA6607BDBD /* LevelIndicator.swift */,
 				0E3E617BA1B5D4180B638467 /* MotionTracker.swift */,
 			);
 			path = Camera;
@@ -305,6 +304,7 @@
 		B3A536F10122F8D11246D1C7 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				4F8C2D9A1B7E6F3D5C8A2E9B /* LaunchPlaceholderView.swift */,
 				197ECEB0C5153EB43B22B014 /* RootView.swift */,
 			);
 			path = App;
@@ -498,7 +498,6 @@
 				B129AE842D616A701CA5E6CF /* HapticEngine.swift in Sources */,
 				A6C4AAD7E181E65616046D99 /* HomeView.swift in Sources */,
 				D48DAAC3F308B09F8813D1E2 /* ImageProcessing.swift in Sources */,
-				58BE35DD2D49C6DE8E91C773 /* LevelIndicator.swift in Sources */,
 				00BD0B60363FECC8B2A80AD3 /* MotionTracker.swift in Sources */,
 				55FBB4D77B9D44DCAF4E6200 /* NeonPlayroom.swift in Sources */,
 				F78F99EE01991661517FC4B8 /* OnboardingView.swift in Sources */,
@@ -514,6 +513,7 @@
 				629484E8183046301D11BDD5 /* ReminderHabit.swift in Sources */,
 				B9A89D35FA07A2429E07539E /* ReminderScheduler.swift in Sources */,
 				FF9E2A2865848C81147E7F95 /* ReviewSaveView.swift in Sources */,
+				7B2A8F1D6E4C9B5A3D7F8E2C /* LaunchPlaceholderView.swift in Sources */,
 				48B6430ED3194B10B5B8ECF7 /* RootView.swift in Sources */,
 				8A630A1C099DAC2F554B4600 /* SettingsView.swift in Sources */,
 				9DFE1D31B3B24793005E4FBC /* Shapes.swift in Sources */,

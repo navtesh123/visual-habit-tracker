@@ -13,6 +13,9 @@ struct ReviewSaveView: View {
     let meta: CaptureMeta
     /// Invoked when the sheet dismisses. `true` if the photo was saved.
     let onCompletion: (Bool) -> Void
+    /// Called when the user taps ✕ to discard the photo entirely and return
+    /// to wherever they were before opening the camera.
+    var onDiscard: (() -> Void)? = nil
 
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
@@ -72,7 +75,7 @@ struct ReviewSaveView: View {
         .preferredColorScheme(.dark)
         .task {
             if let previous = project.latestPhoto {
-                previousImage = PhotoStore.shared.loadFullImage(previous)
+                previousImage = await PhotoStore.shared.loadFullImageAsync(previous)
             }
         }
     }
@@ -178,6 +181,18 @@ struct ReviewSaveView: View {
                     .glassControl()
             }
             Spacer()
+
+            Button {
+                onDiscard?()
+                dismiss()
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.headline)
+                    .frame(width: 40, height: 40)
+                    .foregroundStyle(NeonPlayroom.ghostWhite)
+            }
+            .glassControl()
+            .accessibilityLabel("Discard photo")
         }
     }
 
@@ -252,13 +267,22 @@ struct ReviewSaveView: View {
         let trimmed = note.trimmingCharacters(in: .whitespacesAndNewlines)
         resolvedMeta.note = trimmed.isEmpty ? nil : trimmed
 
-        do {
-            _ = try PhotoStore.shared.save(displayedImage, for: project, meta: resolvedMeta, in: context)
-            Haptics.success()
-            onCompletion(true)
-            dismiss()
-        } catch {
-            isSaving = false
+        let imageToSave = displayedImage
+        let metaToSave = resolvedMeta
+        Task {
+            do {
+                _ = try await PhotoStore.shared.save(
+                    imageToSave,
+                    for: project,
+                    meta: metaToSave,
+                    in: context
+                )
+                Haptics.success()
+                onCompletion(true)
+                dismiss()
+            } catch {
+                isSaving = false
+            }
         }
     }
 }

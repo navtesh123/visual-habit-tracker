@@ -15,39 +15,76 @@
 import Foundation
 import SwiftData
 import CloudKit
-import Combine
+import os
 
 private let cloudContainerID = "iCloud.app.bloomtracker.Bloom"
+let launchLogger = Logger(subsystem: "app.bloomtracker.Bloom", category: "Launch")
 
 @MainActor
 @Observable
 final class CloudKitBackupController {
-    static let shared = CloudKitBackupController()
+    private static var _shared: CloudKitBackupController?
+
+    /// Access the singleton. Must be called only after `bootstrap()` has
+    /// completed; otherwise we'd be back to synchronous container init on
+    /// the main actor at first access.
+    static var shared: CloudKitBackupController {
+        guard let instance = _shared else {
+            preconditionFailure("CloudKitBackupController accessed before bootstrap()")
+        }
+        return instance
+    }
 
     /// Latest status, polled on enable / app-foreground / on subscription
     /// pushes. Views observe this via `@Bindable` or `Observable`.
     private(set) var status: BackupStatus = .disabled
 
-    /// The SwiftData container the app should use. When backup is off this
-    /// equals `localContainer`; when on, it's `cloudContainer`.
-    var activeContainer: ModelContainer {
-        AppSettings.cloudKitBackupEnabled
-            ? (cloudContainer ?? localContainer)
-            : localContainer
-    }
+    /// The SwiftData container the app installed at launch.
+    let activeContainer: ModelContainer
 
-    let localContainer: ModelContainer
     private var cloudContainer: ModelContainer?
+    private var localContainer: ModelContainer?
     private var probeTask: Task<Void, Never>?
 
-    init() {
-        self.localContainer = Self.buildLocalContainer()
-        // If the user had backup turned on previously, hydrate state and
-        // attempt to reconstruct the cloud container.
-        if AppSettings.cloudKitBackupEnabled {
-            self.cloudContainer = Self.buildCloudContainer()
+    // MARK: - Bootstrap
+
+    /// Build the SwiftData container off the main actor and create the
+    /// singleton. Returns the container so SwiftUI can install it via
+    /// `.modelContainer(_:)` only after the heavy work has finished.
+    static func bootstrap() async -> ModelContainer {
+        let started = ContinuousClock.now
+        let backupEnabled = AppSettings.cloudKitBackupEnabled
+        let result: BootstrapResult = await Task.detached(priority: .userInitiated) {
+            buildStartupContainer(cloudKitEnabled: backupEnabled)
+        }.value
+
+        let elapsedMs = Int(started.duration(to: .now).milliseconds)
+        switch result.kind {
+        case .cloud:
+            launchLogger.info("ModelContainer (cloud) ready in \(elapsedMs, privacy: .public)ms")
+        case .localFallback:
+            launchLogger.error("Cloud container failed; fell back to local in \(elapsedMs, privacy: .public)ms")
+        case .local:
+            launchLogger.info("ModelContainer (local) ready in \(elapsedMs, privacy: .public)ms")
+        }
+
+        let controller = CloudKitBackupController(result: result)
+        _shared = controller
+        return result.container
+    }
+
+    private init(result: BootstrapResult) {
+        self.activeContainer = result.container
+        switch result.kind {
+        case .cloud:
+            self.cloudContainer = result.container
             self.status = .syncing
-            scheduleProbe()
+        case .localFallback:
+            self.localContainer = result.container
+            self.status = .paused(reason: .offline)
+        case .local:
+            self.localContainer = result.container
+            self.status = .disabled
         }
     }
 
@@ -59,7 +96,9 @@ final class CloudKitBackupController {
     func enable() async {
         AppSettings.cloudKitBackupEnabled = true
         if cloudContainer == nil {
-            cloudContainer = Self.buildCloudContainer()
+            cloudContainer = await Task.detached(priority: .userInitiated) {
+                Self.buildCloudContainer()
+            }.value
         }
         status = .syncing
         await probe()
@@ -74,15 +113,13 @@ final class CloudKitBackupController {
         cloudContainer = nil
     }
 
-    /// Re-probe account / quota. Call from `.onAppear` of Home and Settings,
-    /// and from the foreground notification handler.
+    /// Re-probe account / quota. Call from Home / Settings, and from the
+    /// foreground notification handler. Cheap when backup is disabled.
     func refresh() {
         guard AppSettings.cloudKitBackupEnabled else {
             status = .disabled
             return
         }
-        // Write status immediately so any view observing backup.status
-        // gets a re-render right away rather than waiting for the async probe.
         status = .syncing
         scheduleProbe()
     }
@@ -140,11 +177,25 @@ final class CloudKitBackupController {
         }
     }
 
-    // MARK: - Container construction
+    // MARK: - Container construction (nonisolated, safe to call off main)
+
+    fileprivate struct BootstrapResult: Sendable {
+        enum Kind: Sendable { case local, localFallback, cloud }
+        let container: ModelContainer
+        let kind: Kind
+    }
+
+    nonisolated private static func buildStartupContainer(cloudKitEnabled: Bool) -> BootstrapResult {
+        if cloudKitEnabled, let cloud = buildCloudContainer() {
+            return BootstrapResult(container: cloud, kind: .cloud)
+        }
+        let local = buildLocalContainer()
+        return BootstrapResult(container: local, kind: cloudKitEnabled ? .localFallback : .local)
+    }
 
     /// Local-only ModelContainer — matches the existing app shape so we can
     /// always fall back to it without losing data.
-    private static func buildLocalContainer() -> ModelContainer {
+    nonisolated private static func buildLocalContainer() -> ModelContainer {
         do {
             return try ModelContainer(
                 for: Project.self, Photo.self, ReferenceShot.self
@@ -157,7 +208,7 @@ final class CloudKitBackupController {
     /// CloudKit-backed ModelContainer using the private database scope.
     /// Returns `nil` if CloudKit can't be reached at construction time;
     /// callers fall back to the local container.
-    private static func buildCloudContainer() -> ModelContainer? {
+    nonisolated private static func buildCloudContainer() -> ModelContainer? {
         let configuration = ModelConfiguration(
             "BloomCloudStore",
             cloudKitDatabase: .private(cloudContainerID)
@@ -207,5 +258,13 @@ final class CloudKitBackupController {
             case .synced:      return "checkmark.icloud"
             }
         }
+    }
+}
+
+extension Duration {
+    /// Approximate milliseconds for logging; not for accounting.
+    var milliseconds: Double {
+        let (seconds, attoseconds) = components
+        return Double(seconds) * 1_000 + Double(attoseconds) / 1_000_000_000_000_000
     }
 }
