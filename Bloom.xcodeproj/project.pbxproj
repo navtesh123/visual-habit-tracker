@@ -9,14 +9,12 @@
 /* Begin PBXBuildFile section */
 		00BD0B60363FECC8B2A80AD3 /* MotionTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E3E617BA1B5D4180B638467 /* MotionTracker.swift */; };
 		038951E5BB9704D328809A21 /* SliderRevealView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB09714A03F2F648C1FC2098 /* SliderRevealView.swift */; };
-		076C1C0898C9BB4D5AFAB525 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C7781015D398838206355241 /* README.md */; };
 		0FB97134E2758EA61E8140BC /* BackupStatusPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB065A819A2745FB03A11B34 /* BackupStatusPill.swift */; };
 		157D3C34B482965902670833 /* Cadence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C82790EE6BFC3FBB40BC6BB /* Cadence.swift */; };
 		26D9449875DBB26BFE67F3DA /* ShareCompositionRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F74BBCDB9D58CFD3197CB751 /* ShareCompositionRenderer.swift */; };
 		326782C15EE36785C0FF4245 /* SideBySideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8987C806EF9A6FA15249ABA4 /* SideBySideView.swift */; };
 		3AFAB9067409F8ECF2B49DEE /* TimelapseFrameNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689400BD9C56B0FCAFD57EA4 /* TimelapseFrameNormalizer.swift */; };
 		3C8AFCFFA8210E132E13F728 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0B5ABC48F124F52CCC27A6 /* Project.swift */; };
-		441FB24FF650CA51B512BB71 /* BebasNeue-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 51C8941051C44E65908753DA /* BebasNeue-Regular.ttf */; };
 		44F14474D28488502B1CA7D3 /* ProjectDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37CD2AFF3218A94280274BC /* ProjectDetailView.swift */; };
 		48B6430ED3194B10B5B8ECF7 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197ECEB0C5153EB43B22B014 /* RootView.swift */; };
 		4D38D2398FDEFD7A3957BD0B /* BloomTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACD398B52BFC76963741006 /* BloomTests.swift */; };
@@ -36,7 +34,6 @@
 		8E426DC87393C649E25EDF3C /* GhostOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE10F52F588947082F2E29D2 /* GhostOverlayView.swift */; };
 		8EF6BE4744AA7127151AFAE8 /* ProjectCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0A2EC4EB807E6E7E252C9E6 /* ProjectCard.swift */; };
 		906A65860C2D9400BFCCAD0B /* SubjectType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CF8E0260BF2F58DB45CC1B /* SubjectType.swift */; };
-		92525ABA9A1E9D6182C7DC1D /* Inter-VariableFont_opsz,wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9422F8C7734177AC08A660E /* Inter-VariableFont_opsz,wght.ttf */; };
 		9820439525B2F386EF04BFC3 /* ProjectExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13418BAC85BBAB6C6BE552B8 /* ProjectExporter.swift */; };
 		9AB3494C9905375D92B73170 /* BackupStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6935DF6692B665EA5C6655D /* BackupStatus.swift */; };
 		9C448E65A2E8E330CFE06D6A /* DateFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 101E6054619F054D7D19A68B /* DateFormatting.swift */; };
@@ -90,7 +87,6 @@
 		49CF7F7FEFF821AC39A7DDA4 /* ReviewSaveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSaveView.swift; sourceTree = "<group>"; };
 		4E88E08D290202D69ADCF0E3 /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
 		512F2543D6D1FB40B1056CED /* CameraSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraSession.swift; sourceTree = "<group>"; };
-		51C8941051C44E65908753DA /* BebasNeue-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "BebasNeue-Regular.ttf"; sourceTree = "<group>"; };
 		58A7E350A55D76E31B93A47C /* AutoAlignProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoAlignProcessor.swift; sourceTree = "<group>"; };
 		5C5C1E840DC2F0784E7B554A /* GlassModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassModifiers.swift; sourceTree = "<group>"; };
 		5D361CCA0147E1D36A65CE8A /* TimelapseRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelapseRenderer.swift; sourceTree = "<group>"; };

@@ -44,9 +44,7 @@
 	<key>NSUserTrackingUsageDescription</key>
 	<string>Bloom Tracker never tracks you. This permission is declined by default.</string>
 	<key>UIAppFonts</key>
-	<array>
-		<string>BebasNeue-Regular.ttf</string>
-	</array>
+	<array/>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>

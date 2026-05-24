@@ -2,17 +2,13 @@ import SwiftUI
 
 /// Brand typography (PRD §7.4).
 ///
-/// Display headline face: Bebas Neue (bundled).
-/// Body face: SF Pro Rounded — applied app-wide via `.fontDesign(.rounded)` in RootView.
+/// All text uses SF Pro Rounded — applied app-wide via `.fontDesign(.rounded)` in RootView.
+/// Display uses black weight; body scales regular → medium → semibold.
 enum AppFont {
-    private static let displayFamily = "BebasNeue-Regular"
 
-    /// Display / headline. Negative kerning is applied at the modifier site for compactness.
+    /// Display / headline. Black weight; negative kerning applied at the call site.
     static func display(_ size: CGFloat) -> Font {
-        if UIFont(name: displayFamily, size: size) != nil {
-            return .custom(displayFamily, size: size)
-        }
-        return .system(size: size, weight: .heavy, design: .default).width(.condensed)
+        .system(size: size, weight: .black)
     }
 
     static func body(_ size: CGFloat, weight: Weight = .regular) -> Font {
