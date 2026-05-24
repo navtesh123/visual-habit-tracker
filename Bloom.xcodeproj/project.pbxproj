@@ -108,7 +108,6 @@
 		9F0380F24DEED563CE95C27C /* ReferenceShot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceShot.swift; sourceTree = "<group>"; };
 		9FEFE59918D96664EFA0E955 /* ReminderHabit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderHabit.swift; sourceTree = "<group>"; };
 		A016C0D6FB6BB37F31B106CB /* Shapes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shapes.swift; sourceTree = "<group>"; };
-		A9422F8C7734177AC08A660E /* Inter-VariableFont_opsz,wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-VariableFont_opsz,wght.ttf"; sourceTree = "<group>"; };
 		B37CD2AFF3218A94280274BC /* ProjectDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectDetailView.swift; sourceTree = "<group>"; };
 		B628C277CC0EF1014721EE72 /* BloomTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BloomTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB09714A03F2F648C1FC2098 /* SliderRevealView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderRevealView.swift; sourceTree = "<group>"; };
@@ -116,7 +115,6 @@
 		BE10F52F588947082F2E29D2 /* GhostOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GhostOverlayView.swift; sourceTree = "<group>"; };
 		BFD7BE8E3A6A759FD472C675 /* ExportMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportMenu.swift; sourceTree = "<group>"; };
 		C6C088CA0F825A62DCFA4E41 /* TimelapsePlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelapsePlayerView.swift; sourceTree = "<group>"; };
-		C7781015D398838206355241 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		D938CD012AB8FF3DC922FA16 /* ContactSheetRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactSheetRenderer.swift; sourceTree = "<group>"; };
 		DE29C460DD7130BF223682D2 /* ImageProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProcessing.swift; sourceTree = "<group>"; };
 		E0A2EC4EB807E6E7E252C9E6 /* ProjectCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectCard.swift; sourceTree = "<group>"; };
@@ -130,16 +128,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
-		0B5B57C93CE9438E48205DA6 /* Fonts */ = {
-			isa = PBXGroup;
-			children = (
-				51C8941051C44E65908753DA /* BebasNeue-Regular.ttf */,
-				A9422F8C7734177AC08A660E /* Inter-VariableFont_opsz,wght.ttf */,
-				C7781015D398838206355241 /* README.md */,
-			);
-			path = Fonts;
-			sourceTree = "<group>";
-		};
 		0D4B58A166B90617FBCCD501 /* Timelapse */ = {
 			isa = PBXGroup;
 			children = (
@@ -272,7 +260,6 @@
 		898DA9A4E953684717E5EA43 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				0B5B57C93CE9438E48205DA6 /* Fonts */,
 				41231063B50E15D80C370B93 /* Assets.xcassets */,
 				E450622DF1B68F33DB1BD353 /* Bloom.entitlements */,
 				F0A925AA9A8CD73F6283B85B /* Info.plist */,
@@ -473,9 +460,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E928670164DFE0FCCCF895E5 /* Assets.xcassets in Resources */,
-				441FB24FF650CA51B512BB71 /* BebasNeue-Regular.ttf in Resources */,
-				92525ABA9A1E9D6182C7DC1D /* Inter-VariableFont_opsz,wght.ttf in Resources */,
-				076C1C0898C9BB4D5AFAB525 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
