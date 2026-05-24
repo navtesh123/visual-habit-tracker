@@ -72,6 +72,7 @@ struct CameraView: View {
                 permissionDenied
             }
         }
+        .background(NavigationSwipeBackDisabler())
         .preferredColorScheme(.dark)
         .navigationBarBackButtonHidden(true)
         .task {
@@ -292,5 +293,29 @@ private extension CameraSession.Status {
     var isNotReady: Bool {
         if case .ready = self { return false }
         return true
+    }
+}
+
+// MARK: - Swipe-back suppressor
+//
+// The horizontal ghost-opacity slider conflicts with NavigationStack's
+// interactive pop gesture — dragging the slider triggers a swipe-back
+// and reveals the previous screen. Disabling the recognizer while this
+// view is on-screen (and restoring it on disappear) fixes the conflict.
+
+private struct NavigationSwipeBackDisabler: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> _VC { _VC() }
+    func updateUIViewController(_ uiViewController: _VC, context: Context) {}
+
+    final class _VC: UIViewController {
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+        }
+
+        override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        }
     }
 }
