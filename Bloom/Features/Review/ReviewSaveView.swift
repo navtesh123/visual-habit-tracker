@@ -3,9 +3,10 @@ import SwiftData
 
 /// The confirmation gate after a capture (PRD §3.4).
 ///
-/// Full-bleed view of the just-captured image with a horizontal-swipe
-/// affordance to compare against the previous photo. Glass controls float
-/// above: Retake, optional note, Save.
+/// Image preview (aspect-fit, rounded) in the upper portion of the screen,
+/// with a horizontal-swipe affordance to compare against the previous photo.
+/// All controls — auto-align toggle, optional note field, Retake / Save — sit
+/// in a fixed section at the bottom so they are always fully visible.
 struct ReviewSaveView: View {
     let project: Project
     let image: UIImage
@@ -29,11 +30,13 @@ struct ReviewSaveView: View {
     @State private var alignedImage: UIImage?
 
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
+        VStack(spacing: 0) {
+            topBar
+                .padding(.horizontal, 18)
+                .padding(.top, 8)
+                .padding(.bottom, 12)
 
             previewStack
-                .ignoresSafeArea()
                 .gesture(
                     DragGesture()
                         .onChanged { value in
@@ -47,10 +50,13 @@ struct ReviewSaveView: View {
                             }
                         }
                 )
+                .frame(maxWidth: .infinity)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .padding(.horizontal, 16)
 
-            VStack {
-                topBar
-                Spacer()
+            Spacer(minLength: 12)
+
+            VStack(spacing: 10) {
                 if showsAutoAlign {
                     autoAlignToggle
                 }
@@ -60,8 +66,9 @@ struct ReviewSaveView: View {
                 bottomBar
             }
             .padding(.horizontal, 18)
-            .padding(.bottom, 24)
+            .padding(.bottom, 28)
         }
+        .background(Color.black.ignoresSafeArea())
         .preferredColorScheme(.dark)
         .task {
             if let previous = project.latestPhoto {
@@ -75,12 +82,12 @@ struct ReviewSaveView: View {
             if let previousImage {
                 Image(uiImage: previousImage)
                     .resizable()
-                    .scaledToFill()
+                    .scaledToFit()
                     .opacity(Double(swipeProgress))
             }
             Image(uiImage: displayedImage)
                 .resizable()
-                .scaledToFill()
+                .scaledToFit()
                 .opacity(Double(1 - swipeProgress))
         }
     }
